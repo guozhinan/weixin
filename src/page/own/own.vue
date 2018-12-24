@@ -9,10 +9,10 @@
            </div>
         </div>
         <div class="main">
-          <cell  link="/myMindList">
+          <cell is-link @click.native="goto('/myMindList')">
             <span slot="title"><i class="icon iconfont icon-qingqiugenzongrizhi"></i>&nbsp;&nbsp;&nbsp;我的请求</span>
           </cell>
-          <cell link="/develop">
+          <cell is-link @click.native="goto('/myCollection')">
             <span slot="title"><i class="icon iconfont icon-shoucang"></i>&nbsp;&nbsp;&nbsp;我的收藏</span>          
           </cell>
           <cell link="/develop">
@@ -28,12 +28,9 @@
     </section>
 </template>
 <script>
-    import headTop from 'src/components/header/head'
-    import alertTip from 'src/components/common/alertTip' 
-    import {wxAuthor} from 'src/config/weixin'
     import {getOpenid,checkLogin} from 'src/service/getData';
     import headImg from 'src/images/go_logo_1.png'
-    import { Group, Cell, Drawer,PopupPicker,Picker,XInput, XTextarea ,Checker,CheckerItem,Alert   } from 'vux'
+    import { Cell } from 'vux'
     export default {
       data(){
             return{
@@ -47,33 +44,19 @@
           this.checkOpenId();
         },
         components: {
-            headTop,
-            alertTip,
-            Group,
-            Cell,
-            PopupPicker,
-            Picker,
-            XInput,
-            XTextarea,
-            Checker,
-            CheckerItem,
-            Alert 
+            Cell
         },
         computed: {
            
         },
         watch: {
-          $route(to,from){
-            if(to.query.code){
-              this.getOpenid(to.query.code)
-            }
-          }
+
         },
         methods: {
             showInfo(){
               if(sessionStorage.isLogin == 'Y'){
-                let userInfo = JSON.parse(sessionStorage.user);
                 this.isLogin = 'Y';
+                let userInfo = JSON.parse(sessionStorage.user);
                 this.userName = userInfo.nickname;
                 this.headImgUrl = userInfo.headImgUrl;
               }else{
@@ -87,6 +70,9 @@
               }
               sessionStorage.currentUrl = window.location.href;
               this.$router.push(path);
+            },
+            goto(path){//登录了跳相应链接，未登录先登录
+              this.isLogin == 'Y'?this.$router.push(path):this.$router.push('/login');
             },
             //判断是否登陆
             checkLogin(openId){

@@ -17,11 +17,11 @@
               <div class="mindPartContent">
                 <div class="mindPareItem">
                   <div class="flexLeft">发布时间</div>
-                  <div class="flexRight">{{TTask.createTime | createTime}}</div>
+                  <div class="flexRight">{{TTask.createTime | filterCreateTime}}</div>
                 </div>
                 <div class="mindPareItem">
                   <div class="flexLeft">任务状态</div>
-                  <div class="flexRight">{{TTask.status | mindStatus}}</div>
+                  <div class="flexRight">{{TTask.status | filterMindStatus}}</div>
                 </div>
                 
               </div>
@@ -47,7 +47,7 @@
                 </div>
                 <div class="mindPareItem">
                   <div class="flexLeft">预算收益</div>
-                  <div class="flexRight">{{TTask.returnType | repay}}</div>
+                  <div class="flexRight">{{TTask.returnType | filterRepay}}</div>
                 </div>
                 <div class="mindPareItem">
                   <div class="flexLeft">任务描述</div>
@@ -55,7 +55,7 @@
                 </div>
                 <div class="mindPareItem">
                   <div class="flexLeft">任务详细文档</div>
-                  <div class="flexRight download"><span>点击下载</span></div>
+                  <div class="flexRight download"><span @click="downloadFile(TTask.fileTask)">点击查看</span></div>
                 </div>
                 <div class="mindPareItem">
                   <div class="flexLeft">感谢金</div>
@@ -83,13 +83,14 @@
           </div>
         </div>
         <div class="bottom">
-          <div class="editor" @click="goAddress">编辑</div>
+          <div class="bottomItem"><i class="fa fa-remove"></i> 撤销</div>
+          <div class="bottomItem" @click="goAddress"><i class="fa fa-wrench"></i> 编辑</div>
+          <div class="bottomItem"><i class="fa fa-check"></i> 完成</div>
         </div>
     </section>
 </template>
 <script>
     import {getTTask} from 'src/service/getData'
-    // import { XTextarea,Search ,Checker,CheckerItem  } from 'vux'
     export default {
       data(){
             return{
@@ -109,39 +110,6 @@
         },
         computed: {
            
-        },
-        filters: {
-          mindType(value) {
-            if(!value) return;
-            if(value == '01') return '任务发布';
-            if(value == '02') return '项目发布';
-            if(value == '03') return '愿景发布';
-          },
-          createTime(value) {
-            if(!value) return;
-            let time = new Date(value);
-            let y = time.getFullYear();    
-            let m = time.getMonth() + 1;    
-            m = m < 10 ? ('0' + m) : m;    
-            let d = time.getDate();    
-            d = d < 10 ? ('0' + d) : d;    
-            return y+'/'+m+'/'+d;
-          },
-          repay(value) {
-            if(!value) return;
-            if(value == '01') return '一次性回报';
-            if(value == '02') return '收益比';
-            if(value == '03') return '月收入';
-          },
-          //01发布中 02领取中 03已撤销 04失败 05成功
-          mindStatus(value) {
-            if(!value) return;
-            if(value == '01') return '发布中';
-            if(value == '02') return '领取中';
-            if(value == '03') return '已撤销';
-            if(value == '04') return '失败';
-            if(value == '05') return '成功';
-          }
         },
         methods: {
           goAddress() {
@@ -171,6 +139,11 @@
           //我要推荐
           share() {
             this.shareShow = true;
+          },
+          //查看详细文档
+          downloadFile(path) {
+            path = 'https://www.baidu.com/img/baidu_jgylogo3.gif';
+            window.location.href = path;
           }
         }
     }
@@ -186,15 +159,8 @@
         background: #fff;
     }
     .bgImg {
-      /* background: url('../../images/own_bg-1.jpg') no-repeat; */
       height: 4rem;
       background-size: 100% 100%;
-      /* filter: url(10px);  FireFox, Chrome, Opera  */
-      /* -webkit-filter: blur(6px); /* Chrome, Opera */
-       /* -moz-filter: blur(6px);
-        -ms-filter: blur(6px);    
-            filter: blur(6px); */
-      /* filter: progid:DXImageTransform.Microsoft.Blur(PixelRadius=6, MakeShadow=false);  */ 
     }
     .title {
       padding: 0.5rem;
@@ -366,24 +332,25 @@
     }
     .bottom {
       position: fixed;
-      bottom: 1.95rem;
+      bottom: 0;
       left: 0;
       width: 100%;
-      height: 2.4rem;
+      height: 1.95rem;
       z-index: 106;
       background: #fff;
-      /* box-shadow: 0 -0.02667rem 0.05333rem rgba(0, 0, 0, 0.1)       */
+      box-shadow: 0 -0.02667rem 0.05333rem rgba(0, 0, 0, 0.1);
+      display: flex;       
     }
-    .editor {
-      width: 90%;
-      margin: 0.5rem auto;
-      height: 1.4rem;
-      line-height: 1.4rem;
+    .bottomItem {
+      flex: 1;
+      height: 1.95rem;
+      line-height: 1.95rem;
       text-align: center;
-      font-size: 0.65rem;
-      border: 1px solid #ccc;
-      color: cadetblue;
-      border-radius: 4px;
+      font-size: 0.6rem;
+      color: #666;
+    }
+    .bottomItem i {
+      color: #666;
     }
 </style>
 

@@ -9,13 +9,13 @@
         <div class="mindList" v-show="mindList.length>0">
           <router-link :to="{name:'myMindItem',params:{id:item.id}}" class="mindItem" :key="index" v-for="(item,index) in mindList">
               <div class="mindItemTop">
-                <span class="left">{{item.type | mindType}}</span>
-                <span class="right">{{item.createTime | createTime}}</span>
+                <span class="left">{{item.type | filterMindType}}</span>
+                <span class="right">{{item.createTime | filterCreateTime}}</span>
               </div>
               <div class="mindItemName">{{item.name}}</div> 
               <div class="mindItemDes">{{item.taskDescribe}}</div>
               <div class="mindItemAmount">
-                <span class="left">{{item.status | mindStatus}}</span>
+                <span class="left">{{item.status | filterMindStatus}}</span>
                 <span class="right">￥{{item.amount}}</span>
               </div>          
           </router-link>
@@ -34,7 +34,8 @@
         },
         mounted(){
           // sessionStorage.openId = 'ozIdu1Ro-oFTru19uM0JnB_CBfCM';
-          // this.getTTaskList();
+          sessionStorage.openId = 'ozIdu1dDC5ihGl52a8v5z1sBF-aw';
+          this.getTTaskList();
           if(sessionStorage.openId) {
             if(sessionStorage.isLogin == 'Y'){
               this.getTTaskList();
@@ -59,33 +60,6 @@
         },
         computed: {
            
-        },
-        filters: {
-          mindType(value) {
-            if(!value) return;
-            if(value == '01') return '任务发布';
-            if(value == '02') return '项目发布';
-            if(value == '03') return '愿景发布';
-          },
-          createTime(value) {
-            if(!value) return;
-            let time = new Date(value);
-            let y = time.getFullYear();    
-            let m = time.getMonth() + 1;    
-            m = m < 10 ? ('0' + m) : m;    
-            let d = time.getDate();    
-            d = d < 10 ? ('0' + d) : d;    
-            return y+'/'+m+'/'+d;
-          },
-          //01发布中 02领取中 03已撤销 04失败 05成功
-          mindStatus(value) {
-            if(!value) return;
-            if(value == '01') return '发布中';
-            if(value == '02') return '领取中';
-            if(value == '03') return '已撤销';
-            if(value == '04') return '失败';
-            if(value == '05') return '成功';
-          }
         },
         methods: {
           getTTaskList() {

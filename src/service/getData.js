@@ -51,6 +51,11 @@ export const updateTask = (data) => fetch('/task/updateTask', data,'POST');
  * 想法中心
  */
 export const getAllTTask = (data) => fetch('/task/getAllTTask', data,'POST');
+/**
+ * 查询评论列表
+ */
+export const getCommentList = (data) => fetch('/task/getCommentList', data,'POST');
+
 
 
 

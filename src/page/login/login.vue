@@ -58,10 +58,10 @@
               login(this.phone,sessionStorage.openId,this.verifyCode).then(res => {
                 if(res.resultCode == '00000'){
                   if(sessionStorage.user){
-                    let userInfo = Object.assign(JSON.parse(sessionStorage.user),res.tUser);
+                    let userInfo = Object.assign(JSON.parse(sessionStorage.user),res.user);
                     sessionStorage.user = JSON.stringify(userInfo);
                   }else{
-                    sessionStorage.user = JSON.parse(res.tUser)
+                    sessionStorage.user = JSON.stringify(res.user)
                   }
                   sessionStorage.isLogin = 'Y';
                   window.location.href = sessionStorage.currentUrl;

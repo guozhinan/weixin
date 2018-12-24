@@ -17,7 +17,7 @@
               <div class="mindPartContent">
                 <div class="mindPareItem">
                   <div class="flexLeft">发布时间</div>
-                  <div class="flexRight">{{TTask.createTime | createTime}}</div>
+                  <div class="flexRight">{{TTask.createTime | filterCreateTime}}</div>
                 </div>
                 <div class="mindPareItem">
                   <div class="flexLeft">发布人</div>
@@ -47,7 +47,7 @@
                 </div>
                 <div class="mindPareItem">
                   <div class="flexLeft">预算收益</div>
-                  <div class="flexRight">{{TTask.returnType | repay}}</div>
+                  <div class="flexRight">{{TTask.returnType | filterRepay}}</div>
                 </div>
                 <div class="mindPareItem">
                   <div class="flexLeft">任务描述</div>
@@ -55,7 +55,7 @@
                 </div>
                 <div class="mindPareItem">
                   <div class="flexLeft">任务详细文档</div>
-                  <div class="flexRight download"><span>点击下载</span></div>
+                  <div class="flexRight download"><span @click="downloadFile(TTask.fileTask)">点击查看</span></div>
                 </div>
                 <div class="mindPareItem">
                   <div class="flexLeft">感谢金</div>
@@ -99,7 +99,7 @@
     </section>
 </template>
 <script>
-    import {getTTask} from 'src/service/getData'
+    import {getTTask,getCommentList} from 'src/service/getData'
     // import { XTextarea,Search ,Checker,CheckerItem  } from 'vux'
     export default {
       data(){
@@ -115,6 +115,7 @@
         mounted(){
           this.id = this.$route.params.id;
           this.getTTask();
+          this.getCommentList();
         },
         components: {
 
@@ -122,42 +123,25 @@
         computed: {
            
         },
-        filters: {
-          mindType(value) {
-            if(!value) return;
-            if(value == '01') return '任务发布';
-            if(value == '02') return '项目发布';
-            if(value == '03') return '愿景发布';
-          },
-          createTime(value) {
-            if(!value) return;
-            let time = new Date(value);
-            let y = time.getFullYear();    
-            let m = time.getMonth() + 1;    
-            m = m < 10 ? ('0' + m) : m;    
-            let d = time.getDate();    
-            d = d < 10 ? ('0' + d) : d;    
-            return y+'/'+m+'/'+d;
-          },
-          repay(value) {
-            if(!value) return;
-            if(value == '01') return '一次性回报';
-            if(value == '02') return '收益比';
-            if(value == '03') return '月收入';
-          }
-        },
         methods: {
+          //获取任务详情
           getTTask() {
             getTTask({id:this.id}).then(res => {
               if(res.resultCode == '00000'){
                 this.TTask = res.TTask;
                 this.user = res.TTask.tUser.wxUser;
-                console.log(res)
               }else{
-                this.$vux.alert.show({
-                  title: '提示',
-                  content: res.resultMsg
-                });
+                this.$vux.alert.show({title: '提示',content: res.resultMsg});
+              }
+            })
+          },
+          //获取评论列表
+          getCommentList(){
+            getCommentList({id:this.id}).then(res => {
+              if(res.resultCode == '00000'){
+                console.log(res);
+              }else{
+                this.$vux.alert.show({title: '提示',content: res.resultMsg});
               }
             })
           },
@@ -172,6 +156,11 @@
           //我要推荐
           share() {
             this.shareShow = true;
+          },
+          //查看详细文档
+          downloadFile(path) {
+            path = 'https://www.baidu.com/img/baidu_jgylogo3.gif';
+            window.location.href = path;
           }
         }
     }
