@@ -52,13 +52,25 @@ export const updateTask = (data) => fetch('/task/updateTask', data,'POST');
  */
 export const getAllTTask = (data) => fetch('/task/getAllTTask', data,'POST');
 /**
- * 查询评论列表
+ * 我的收藏
+ */
+export const getTCollectList = (data) => fetch('/task/getTCollectList', data,'POST');
+/**
+ * 收藏
+ */
+export const insertCollect = (data) => fetch('/task/insertCollect', data,'POST');
+/**
+ * 评论
+ */
+export const giveComment = (data) => fetch('/task/giveComment', data,'POST');
+/**
+ * 评论列表
  */
 export const getCommentList = (data) => fetch('/task/getCommentList', data,'POST');
-
-
-
-
+/**
+ * 加油
+ */
+export const giveLike = (data) => fetch('/task/giveLike', data,'POST');
 
 
 

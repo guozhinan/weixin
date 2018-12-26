@@ -1,12 +1,11 @@
 import {
 	baseUrl
 } from './env'
+import { AlertModule } from 'vux'
 
 export default async(url = '', data = {}, type = 'GET', method = 'fetch') => {
 	type = type.toUpperCase();
 	url = baseUrl + url;
-	console.log(type);
-	console.log(url)
 
 	if (type == 'GET') {
 		let dataStr = ''; //数据拼接字符串
@@ -43,7 +42,10 @@ export default async(url = '', data = {}, type = 'GET', method = 'fetch') => {
 			const responseJson = await response.json();
 			return responseJson
 		} catch (error) {
-			throw new Error(error)
+			// throw new Error(error)
+			AlertModule.show({
+                content: '系统异常'
+        	});
 		}
 	} else {
 		return new Promise((resolve, reject) => {

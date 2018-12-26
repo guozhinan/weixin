@@ -35,6 +35,8 @@ const state = {
 	cartPrice: null, //会员卡价格
 }
 
+// const loadingState = new Vuex.Store({})
+
 export default new Vuex.Store({
 	state,
 	getters,
