@@ -5,7 +5,7 @@
         <!-- <head-top head-title="想法中心"></head-top> -->
         <section class="search">
           <i class="fa fa-search"></i>
-          <input type="search" v-model="name" class="searchInput"/>
+          <input type="search" v-model="submitParams.name" class="searchInput"/>
           <div class="searchBtn" @click="getAllTTask">搜索</div> 
         </section>
         <section class="sortContainer">
@@ -22,7 +22,7 @@
               </div>
               <div class="showRepay" v-show="itemShow.repay">
                 <div class="amountList">
-                  <radio :options="repay" v-model="returnType"></radio>
+                  <radio :options="repay" v-model="submitParams.returnType"></radio>
                   <!-- <x-switch title="一次性回报" v-model="repay.value1"></x-switch>
                   <x-switch title="收益比" v-model="repay.value2"></x-switch>
                   <x-switch title="月收入" v-model="repay.value3"></x-switch> -->
@@ -34,7 +34,7 @@
               </div>
               <div class="showTime" v-show="itemShow.time">
                 <div class="repayList">
-                  <radio :options="time" v-model="publicTime"></radio>
+                  <radio :options="time" v-model="submitParams.publicTime"></radio>
                 </div>
                 <div class="timeBtns">
                   <div class="clear" @click="clearAmount('publicTime')">重置</div>
@@ -43,7 +43,7 @@
               </div>
               <div class="showAmount" v-show="itemShow.amountList">
                 <div class="repayList">
-                  <radio :options="amountList" v-model="amount"></radio>
+                  <radio :options="amountList" v-model="submitParams.amount"></radio>
                 </div>
                 <div class="amountBtns">
                   <div class="clear" @click="clearAmount('amount')">重置</div>
@@ -52,7 +52,7 @@
               </div>
               <div class="showThankFee" v-show="itemShow.thankFee">
                 <div class="repayList">
-                  <radio :options="thankFee" v-model="forGold"></radio>
+                  <radio :options="thankFee" v-model="submitParams.forGold"></radio>
                 </div>
                 <div class="thankFeeBtns">
                   <div class="clear" @click="clearAmount('forGold')">重置</div>
@@ -68,7 +68,7 @@
             <span class="info">暂无列表~~快去发布吧</span>
           </div>
         </div>
-        <div class="mindList" v-show="mindList.length>0">
+        <div ref="mindList" class="mindList" v-show="mindList.length>0">
           <router-link :to="{name:'mindItem',params:{id:item.id}}" class="mindItem" :key="index" v-for="(item,index) in mindList">
             <div class="flexLeft">
               <img :src="item.tUser.wxUser.headimgurl"></img>
@@ -87,9 +87,11 @@
 </template>
 <script>
     import headTop from 'src/components/header/head'
-    import {getAllTTask} from 'src/service/getData'
+    import {getAllTTask,getOpenid} from 'src/service/getData'
     import { Group, Cell, Drawer,PopupPicker,Picker,XInput, XTextarea,Search ,Checker,CheckerItem,XAddress,ChinaAddressV4Data,Value2nameFilter as value2name,XSwitch,Radio    } from 'vux'
     import {province} from 'src/config/province'
+    import {getMore} from 'src/config/getMore'
+    import {check} from 'src/config/checkLogin'
     export default {
       data(){
             return{
@@ -130,19 +132,33 @@
                 thankFee: false,
               },
               columns: 1,  //地区picker只有一列
-              type: '01',  //任务类型
-              name: '',  //搜索框内容
-              province: '',
-              publicTime: '',
-              amount: '',
-              returnType: '',
-              forGold: '',
+              submitParams: {
+                type: '01',  //任务类型
+                name: '',  //搜索框内容
+                province: '', //地区搜索
+                publicTime: '', //发布时间搜索
+                amount: '',  //预算搜索
+                returnType: '', //收益搜索
+                forGold: '',  //感谢金搜索
+                pageNum: 1,
+                pageSize: 20,  
+              },
+              scroll: false,
             }
         },
         mounted(){
-          this.type = this.$route.params.id;
+          this.submitParams.type = this.$route.params.id;
           // console.log(province)
-          this.getAllTTask();
+          this.checkOpenId();
+          let _this = this;
+          let mindListDom = this.$refs.mindList;
+          mindListDom.onscroll = function() {
+            console.log(1111)
+            if(getMore.isScrollToPageBottom(mindListDom)) {
+              console.log(222)
+              getMore.getScrollData(_this.scroll,_this.submitParams.pageNum,_this.getAllTTask)
+            }
+          }
         },
         components: {
             headTop,
@@ -162,66 +178,42 @@
         computed: {
            
         },
-        filters: {
-          createTime(value) {
-            if(!value) return;
-            let time = new Date(value);
-            let y = time.getFullYear();    
-            let m = time.getMonth() + 1;    
-            m = m < 10 ? ('0' + m) : m;    
-            let d = time.getDate();    
-            d = d < 10 ? ('0' + d) : d;    
-            return y+'/'+m+'/'+d;
-          },
-        },
         methods: {
+          //判断是否有openId
+          checkOpenId() {
+            let code = check.getUrlParam('code');
+            if(sessionStorage.openId){//判断是否登陆
+              check.checkLogin(sessionStorage.openId,this.getAllTTask);
+            }else if(code){//获取openid
+              check.getOpenid(code,this.getAllTTask);
+            }
+          },
           hideHandle() {
             this.masterShow = false;
-            // this.areaName = value2name(this.area,ChinaAddressV4Data).split(' ');
           },
           changeHandle() {
-            if(this.area == ''){
-              this.province = '';
-            }else{
-              this.province = value2name(this.area,province).split(' ')[0];
-            }
+            this.submitParams.province = this.area == ''?'':value2name(this.area,province).split(' ')[0];
             this.getAllTTask();
           },
           clearAmount(type) {
-            // let keys = Object.keys(this.itemShow);
-            // keys.forEach(i => this.itemShow[i] = false);
-            this[type] = '';
+            this.submitParams[type] = '';
           },
           finishSearch() {
             this.masterShow = false;
             let keys = Object.keys(this.itemShow);
             keys.forEach(i => this.itemShow[i] = false);
-            console.log(this.returnType)
-            console.log(this.forGold);
-            console.log(this.amount);
-            console.log(this.publicTime);
             this.getAllTTask();
           },
           hideSort() {
             this.masterShow = false;
           },
           getAllTTask() {
-            let params = {
-              pageNum: 1,
-              pageSize: 20,
-              type: this.type,
-              name: this.name,
-              province: this.province,
-              returnType: this.returnType,
-              forGold: this.forGold,
-              amount: this.amount,
-              publicTime: this.publicTime
-            }
-            console.log(JSON.stringify(params))
+            let params = this.submitParams;
             getAllTTask(params).then(res => {
               if(res.resultCode == '00000'){
-                console.log(res)
                 this.mindList = res.TTaskList;
+                // this.mindList = [...res.TTaskList,...res.TTaskList,...res.TTaskList];
+                // this.scroll = true;
               }else{
                 this.$vux.alert.show({
                   title: '提示',

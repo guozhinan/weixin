@@ -15,6 +15,7 @@ const myMindItem = r => require.ensure([], () => r(require('../page/myMindItem/m
 const editor = r => require.ensure([], () => r(require('../page/editor/editor')), 'download')
 const search = r => require.ensure([], () => r(require('../page/search/search')), 'download')
 const myCollection = r => require.ensure([], () => r(require('../page/myCollection/myCollection')), 'download')
+const myRecommendList = r => require.ensure([], () => r(require('../page/myRecommendList/myRecommendList')), 'download')
 
 
 
@@ -136,6 +137,14 @@ export default [{
             component: myCollection,
             meta: {
                 title: '我的收藏'
+            }
+        },
+        {
+            path: '/myRecommendList',
+            name: 'myRecommendList',
+            component: myRecommendList,
+            meta: {
+                title: '我的推荐'
             }
         }
     ]

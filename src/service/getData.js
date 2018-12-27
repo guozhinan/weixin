@@ -34,7 +34,7 @@ export const editTUser = (data) => fetch('/user/editTUser', data,'POST');
 /**
  * 一键发布
  */
-export const insertTask = (data) => fetch('/task/insertTask', data,'POST');
+export const insertTask = (data,ele) => fetch('/task/insertTask', data,'POST',ele);
 /**
  * 我的任务列表
  */

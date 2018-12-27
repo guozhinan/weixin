@@ -23,9 +23,8 @@
     </section>
 </template>
 <script>
-    import headTop from 'src/components/header/head'
     import {getTTaskList,getOpenid,checkLogin} from 'src/service/getData'
-    import { Group, Cell, Drawer,PopupPicker,Picker,XInput, XTextarea,Search ,Checker,CheckerItem  } from 'vux'
+    import {check} from 'src/config/checkLogin'
     export default {
       data(){
             return{
@@ -34,39 +33,29 @@
         },
         mounted(){
           // sessionStorage.openId = 'ozIdu1Ro-oFTru19uM0JnB_CBfCM';
-          sessionStorage.openId = 'ozIdu1dDC5ihGl52a8v5z1sBF-aw';
-          this.getTTaskList();
-          if(sessionStorage.openId) {
+          let openId = sessionStorage.openId?sessionStorage.openId:null;
+          if(openId) {
             if(sessionStorage.isLogin == 'Y'){
               this.getTTaskList();
             }else {
-              this.checkLogin(sessionStorage.openId)
+              check.checkLogin(openId,this.showInfo)
             }
           }else{
             this.checkOpenId();
           }
         },
         components: {
-            headTop,
-            Group,
-            Cell,
-            PopupPicker,
-            Picker,
-            XInput,
-            XTextarea,
-            Checker,
-            CheckerItem,
-            Search
+
         },
         computed: {
            
         },
         methods: {
+          //获取收藏列表
           getTTaskList() {
             let openid = sessionStorage.openId;
             getTTaskList({openid}).then(res => {
               if(res.resultCode == '00000'){
-                console.log(res)
                 this.mindList = res.TTaskList;
               }else{
                 this.$vux.alert.show({
@@ -78,62 +67,21 @@
           },
           //判断是否有openId
           checkOpenId() {
-            let code = this.getUrlParam('code');
-            console.log(code);
-            if(sessionStorage.openId){//判断是否登陆
-              this.checkLogin(sessionStorage.openId)
+            let code = check.getUrlParam('code');
+            let openId = sessionStorage.openId?sessionStorage.openId:null;
+            if(openId){//判断是否登陆
+              check.checkLogin(openId,this.showInfo);
             }else if(code){//获取openid
-              this.getOpenid(code);
+              check.getOpenid(code,this.showInfo);
             }
           },
-          //获取openId
-          getOpenid(code){
-            getOpenid(code).then(res => {
-              if(res.resultCode == '00000'){
-                let openId = res.user.openId;
-                sessionStorage.openId = openId;
-                sessionStorage.user = JSON.stringify(res.user);
-                this.checkLogin(openId);
-              }else{
-                this.$vux.alert.show({
-                  title: '提示',
-                  content: res.resultMsg
-                });
-              }
-            })
-          },
-          //判断是否登陆
-          checkLogin(openId){
-            checkLogin(openId).then(res => {
-              if(res.resultCode == '00000'){
-                this.isLogin = res.isLogin;
-                sessionStorage.isLogin = this.isLogin;
-                let userInfo = JSON.parse(sessionStorage.user);
-                sessionStorage.user = JSON.stringify(Object.assign(userInfo,res.user));
-                sessionStorage.currentUrl = location.href;
-                if(this.isLogin == 'N'){
-                  this.$router.push('/login');
-                }else{
-                  this.getTTaskList();
-                }
-              }else{
-                this.$vux.alert.show({
-                  title: '提示',
-                  content: res.resultMsg
-                });
-              }
-            })
-          },
-          getUrlParam(name){
-            let url = window.location.href;
-            if(url.indexOf('?'+name+'=')>-1){
-              let string = url.split('?'+name+'=')[1];
-              return string.split('&')[0];
-            }else if(url.indexOf('&'+name+'=')>-1){
-              let string = url.split('&'+name+'=')[1];
-              return string.split('&')[0];
+          showInfo() {
+            let isLogin = sessionStorage.isLogin;
+            if(sessionStorage.isLogin == 'Y'){
+              this.getTCollectList();
             }else{
-              return null;
+              sessionStorage.currentUrl = location.href;
+              this.$router.push('/login');
             }
           },
         }

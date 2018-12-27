@@ -46,12 +46,13 @@
               <input class="ownInput" id="forGold" type="tel" v-model="form.forGold" placeholder="推荐被推荐者各45%,平台管理费10%" maxlength="20">
             </div>
         </group>
-        <x-button @click.native="public">发布</x-button>
+        <x-button ref="publish" @click.native="public">发布</x-button>
     </section>
 </template>
 <script>
     import { Group, Cell,PopupPicker,Picker,XInput,XButton, XTextarea ,XAddress,ChinaAddressV4Data,Value2nameFilter as value2name   } from 'vux'
     import {getOpenid,insertTask,checkLogin} from 'src/service/getData'
+    import {check} from 'src/config/checkLogin'
     export default {
       data(){
             return{
@@ -88,8 +89,9 @@
             }
         },
         mounted(){
-          if(sessionStorage.isLogin == 'Y') return;
-          this.checkOpenId();
+          if(sessionStorage.isLogin != 'Y'){
+            this.checkOpenId();
+          }
         },
         components: {
             Group,
@@ -142,6 +144,7 @@
               }   
             },
             public() {
+              console.log(this.$refs.publish)
               this.form.openid = sessionStorage.openId || 'ozIdu1Ro-oFTru19uM0JnB_CBfCM';
               [this.form.province,this.form.city] = this.areaName;
               let obj = {};
@@ -229,30 +232,10 @@
                 this.$vux.alert.show({content: '感谢金只能为整数'});
                 return false;
               }
-              // let keys = Object.keys(obj);
-              // if(this.form.type != '03') {
-              //   keys = keys.filter(item => item != 'fileBlueprint' && item !=  'blueprintfilename');
-              // }
-              // for(let i=0;i<keys.length;i++){
-              //   if(!obj[keys[i]]) {
-              //     this.$vux.alert.show({
-              //       title: '提示',
-              //       content: '信息不能为空'
-              //     });
-              //     return false;
-              //   }
-              // }
-              // if(!this.size) {
-              //   this.$vux.alert.show({
-              //     title: '提示',
-              //     content: '文件不能大于5M，请重新选择文件'
-              //   });
-              //   return false;
-              // }
               return true;
             },
-            insertTask(params) {
-              insertTask(params).then(res => {
+            insertTask(params,ele) {
+              insertTask(params,ele).then(res => {
                 if(res.resultCode == '00000'){
                   this.$vux.alert.show({
                     content: '发布成功'
@@ -271,61 +254,19 @@
             },
             //判断是否有openId
             checkOpenId() {
-              let code = this.getUrlParam('code');
-              console.log(code);
+              let code = check.getUrlParam('code');
               if(sessionStorage.openId){//判断是否登陆
-                this.checkLogin(sessionStorage.openId)
+                check.checkLogin(sessionStorage.openId,this.showInfo)
               }else if(code){//获取openid
-                this.getOpenid(code);
+                check.getOpenid(code,this.showInfo);
               }
             },
-            //获取openId
-            getOpenid(code){
-              getOpenid(code).then(res => {
-                if(res.resultCode == '00000'){
-                  let openId = res.user.openId;
-                  sessionStorage.openId = openId;
-                  sessionStorage.user = JSON.stringify(res.user);
-                  this.checkLogin(openId);
-                }else{
-                  this.$vux.alert.show({
-                    title: '提示',
-                    content: res.resultMsg
-                  });
-                }
-              })
-            },
-             //判断是否登陆
-            checkLogin(openId){
-              checkLogin(openId).then(res => {
-                if(res.resultCode == '00000'){
-                  this.isLogin = res.isLogin;
-                  sessionStorage.isLogin = this.isLogin;
-                  let userInfo = JSON.parse(sessionStorage.user);
-                  sessionStorage.user = JSON.stringify(Object.assign(userInfo,res.user));
-                  sessionStorage.currentUrl = location.href;
-                  if(this.isLogin == 'N'){
-                    this.$router.push('/login');
-                  }
-                }else{
-                  this.$vux.alert.show({
-                    title: '提示',
-                    content: res.resultMsg
-                  });
-                }
-              })
-            },
-            getUrlParam(name){
-                let url = window.location.href;
-                if(url.indexOf('?'+name+'=')>-1){
-                  let string = url.split('?'+name+'=')[1];
-                  return string.split('&')[0];
-                }else if(url.indexOf('&'+name+'=')>-1){
-                  let string = url.split('&'+name+'=')[1];
-                  return string.split('&')[0];
-                }else{
-                  return null;
-                }
+            showInfo() {
+              let isLogin = sessionStorage.isLogin;
+              if(sessionStorage.isLogin != 'Y'){
+                sessionStorage.currentUrl = location.href;
+                this.$router.push('/login');
+              }
             },
         },
         

@@ -84,38 +84,44 @@
         </div>
         <div class="footer">
           <div @click="collection" :class="{'collectionShow':collectionShow}">
-            <i class="fa fa-heart-o"></i>
+            <i class="fa fa-heart-o"></i><br>
             我要收藏
           </div>
+          <div @click="sereral" :class="{'sereralShow':sereralShow}">
+            <i class="fa fa-thumbs-o-up"></i><br>
+            给他加油
+          </div>
           <div @click="tryHandle" :class="{'tryShow':tryShow}">
-            <i class="fa fa-hand-pointer-o"></i>
+            <i class="fa fa-hand-pointer-o"></i><br>
             我想试试
           </div>
           <div @click="share" :class="{'shareShow':shareShow}">
-            <i class="fa fa-paper-plane-o"></i>
+            <i class="fa fa-paper-plane-o"></i><br>
             我要推荐
           </div>
         </div>
     </section>
 </template>
 <script>
-    import {getTTask,getCommentList} from 'src/service/getData'
+    import {getTTask,getCommentList,insertCollect,giveLike} from 'src/service/getData'
     // import { XTextarea,Search ,Checker,CheckerItem  } from 'vux'
     export default {
       data(){
             return{
                 collectionShow: false,  //收藏
+                sereralShow: false, //加油
                 tryShow: false,  //试试
                 shareShow: false,  //推荐
                 id:'',  //任务id
                 TTask: {},   //任务详情
                 user: {},
+                isLogin: 'Y',  //判断是否登录
             }
         },
         mounted(){
           this.id = this.$route.params.id;
           this.getTTask();
-          this.getCommentList();
+          // this.getCommentList();
         },
         components: {
 
@@ -145,17 +151,69 @@
               }
             })
           },
+          //收藏接口
+          insertCollect() {
+             insertCollect({
+               openid: 'ozIdu1Ro-oFTru19uM0JnB_CBfCM',
+               taskId: this.id
+             }).then(res => {
+                if(res.resultCode == '00000'){
+                  this.collectionShow = true;
+                }else{
+                  this.$vux.alert.show({title: '提示',content: res.resultMsg});
+                }
+             }) 
+          },
+          //加油接口
+          giveLike() {
+            giveLike({
+              openid: sessionStorage.openId,
+              taskId: this.id
+            }).then(res => {
+              if(res.resultCode == '00000'){
+                this.sereralShow = true;
+              }else{
+                this.$vux.alert.show({title: '提示',content: res.resultMsg});
+              }
+            })
+          },
            //我要收藏
           collection() {
-            this.collectionShow = true;
+            if(this.isLogin == 'Y'){
+              this.insertCollect();
+            }else{
+              sessionStorage.currentUrl = location.href;
+              this.$router.push('/login');
+            }
+          },
+          //给他加油
+          sereral() {
+            if(this.isLogin == 'Y'){
+              this.giveLike();
+            }else{
+              sessionStorage.currentUrl = location.href;
+              this.$router.push('/login');
+            }
           },
           //我想试试
           tryHandle() {
             this.tryShow = true;
+            if(this.isLogin == 'Y'){
+              // this.insertCollect();
+            }else{
+              sessionStorage.currentUrl = location.href;
+              this.$router.push('/login');
+            }
           },
           //我要推荐
           share() {
             this.shareShow = true;
+            if(this.isLogin == 'Y'){
+              // this.insertCollect();
+            }else{
+              sessionStorage.currentUrl = location.href;
+              this.$router.push('/login');
+            }
           },
           //查看详细文档
           downloadFile(path) {
@@ -341,7 +399,8 @@
       background: #fff;
       font-size: 0.6rem;
       text-align: center;
-      line-height: 1.95rem;
+      line-height: 0.95rem;
+      // line-height: 1.95rem;
     }
     .footer div {
       flex: 1;
