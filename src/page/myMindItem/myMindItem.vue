@@ -83,9 +83,15 @@
           </div>
         </div>
         <div class="bottom">
-          <div class="bottomItem"><i class="fa fa-remove"></i> 撤销</div>
-          <div class="bottomItem" @click="goAddress"><i class="fa fa-wrench"></i> 编辑</div>
-          <div class="bottomItem"><i class="fa fa-check"></i> 完成</div>
+          <div class="bottomItem">
+            <i class="fa fa-remove"></i><span>撤销</span>
+          </div>
+          <div class="bottomItem" @click="goAddress">
+            <i class="fa fa-wrench"></i><span>编辑</span>
+          </div>
+          <div class="bottomItem">
+            <i class="fa fa-check"></i><span>完成</span>
+          </div>
         </div>
     </section>
 </template>
@@ -344,12 +350,19 @@
     .bottomItem {
       flex: 1;
       height: 1.95rem;
-      line-height: 1.95rem;
       text-align: center;
-      font-size: 0.6rem;
+      font-size: 0.5rem;
       color: #666;
+      display: flex;
+      flex-direction: column;
+      padding: 0.3rem;
+      box-sizing: border-box;
+    }
+    .bottomItem span {
+      flex: 1;
     }
     .bottomItem i {
+      flex: 1;
       color: #666;
     }
 </style>

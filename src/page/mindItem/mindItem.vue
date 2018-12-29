@@ -65,8 +65,8 @@
             </div>
           <div class="commont">
             <div class="commontTitle">评论列表</div>
-            <textarea rows="2"></textarea>
-            <div class="commontBtn">提交</div>
+            <textarea rows="2" v-model="commentInfo"></textarea>
+            <div class="commontBtn" @click="comment">提交</div>
             <div class="commontList">
               <div class="flexLeft">
                 <img src="../../images/go_logo_1.png" alt="">
@@ -103,7 +103,7 @@
     </section>
 </template>
 <script>
-    import {getTTask,getCommentList,insertCollect,giveLike} from 'src/service/getData'
+    import {getTTask,getCommentList,insertCollect,giveLike,giveComment} from 'src/service/getData'
     // import { XTextarea,Search ,Checker,CheckerItem  } from 'vux'
     export default {
       data(){
@@ -115,13 +115,13 @@
                 id:'',  //任务id
                 TTask: {},   //任务详情
                 user: {},
-                isLogin: 'Y',  //判断是否登录
+                isLogin: 'Y',  //判断是否登
+                commentInfo: ''  //评论
             }
         },
         mounted(){
           this.id = this.$route.params.id;
           this.getTTask();
-          this.getCommentList();
         },
         components: {
 
@@ -136,6 +136,7 @@
               if(res.resultCode == '00000'){
                 this.TTask = res.TTask;
                 this.user = res.TTask.tUser.wxUser;
+                this.getCommentList();
               }else{
                 this.$vux.alert.show({title: '提示',content: res.resultMsg});
               }
@@ -159,7 +160,6 @@
              }).then(res => {
                 if(res.resultCode == '00000'){
                   this.$vux.toast.text('收藏成功')
-                  this.collectionShow = true;
                 }else{
                   this.$vux.alert.show({title: '提示',content: res.resultMsg});
                 }
@@ -174,7 +174,7 @@
             }).then(res => {
               if(res.resultCode == '00000'){
                 this.$vux.toast.text('加油成功')
-                this.sereralShow = true;
+                this.TTask.sereralCount = parseInt(this.TTask.sereralCount) + 1;
               }else{
                 this.$vux.alert.show({title: '提示',content: res.resultMsg});
               }
@@ -222,6 +222,17 @@
           downloadFile(path) {
             path = 'https://www.baidu.com/img/baidu_jgylogo3.gif';
             window.location.href = path;
+          },
+          //评论
+          comment() {
+            giveComment({
+              openid: sessionStorage.openId,
+              id: this.id,
+              comment: this.commentInfo,
+              commentCount: this.TTask.commentCount
+            }).then(res => {
+
+            })
           }
         }
     }
@@ -400,23 +411,14 @@
       display: flex;
       z-index: 103;
       background: #fff;
-      font-size: 0.6rem;
+      font-size: 0.45rem;
       text-align: center;
-      line-height: 0.95rem;
-      // line-height: 1.95rem;
+      padding: 0.3rem;
+      box-sizing: border-box;
     }
     .footer div {
       flex: 1;
     }
-    .footer .collectionShow,
-    .footer .tryShow,
-    .footer .shareShow,
-    .footer .collectionShow i,
-    .footer .tryShow i,
-    .footer .shareShow i,
-    .footer .sereralShow,
-    .footer .sereralShow i {
-      color: cadetblue;
-    }
+    
 </style>
 
