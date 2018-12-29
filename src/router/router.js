@@ -16,7 +16,8 @@ const editor = r => require.ensure([], () => r(require('../page/editor/editor'))
 const search = r => require.ensure([], () => r(require('../page/search/search')), 'download')
 const myCollection = r => require.ensure([], () => r(require('../page/myCollection/myCollection')), 'download')
 const myRecommendList = r => require.ensure([], () => r(require('../page/myRecommendList/myRecommendList')), 'download')
-
+const myTask = r => require.ensure([], () => r(require('../page/myTask/myTask')), 'download')
+const shareMind = r => require.ensure([], () => r(require('../page/shareMind/shareMind')), 'download')
 
 
 export default [{
@@ -76,7 +77,7 @@ export default [{
             path: '/advertising',
             component: advertising,
             meta: {
-                title: '六度理论'
+                title: '关于go想法'
             }
         },
         {
@@ -145,6 +146,22 @@ export default [{
             component: myRecommendList,
             meta: {
                 title: '我的推荐'
+            }
+        },
+        {
+            path: '/myTask',
+            name: 'myTask',
+            component: myTask,
+            meta: {
+                title: '我的任务'
+            }
+        },
+        {
+            path: '/shareMind',
+            name: 'shareMind',
+            component: shareMind,
+            meta: {
+                title: '任务领取'
             }
         }
     ]

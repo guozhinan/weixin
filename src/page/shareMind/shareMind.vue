@@ -1,7 +1,8 @@
 <template>
     <section class="wrapper">
           <div class="mindItem bgImg title">
-            <div>{{TTask.name}}</div>
+            <div>您的朋友分享了一个任务，等待您领取</div> 
+            <!--<div>{{TTask.name}}</div>
             <p>
               <span style="float:left;">总额：<span class="amount">￥{{TTask.amount}}</span></span>
               <span style="float:right">已加油：{{TTask.sereralCount}}</span>
@@ -9,10 +10,10 @@
             <p>
               <span style="float:left;">感谢金：<span class="amount">￥{{TTask.forGold}}</span></span>
               <span style="float:right">已评论：{{TTask.commentCount}}</span>
-            </p>
+            </p>-->
           </div>
           <div class="mindItem">
-            <div class="mindPart">
+            <!--<div class="mindPart">
               <div class="mindPartTitle">发布信息</div>
               <div class="mindPartContent">
                 <div class="mindPareItem">
@@ -25,10 +26,14 @@
                 </div>
                 
               </div>
-            </div>
+            </div>-->
             <div class="mindPart">
               <div class="mindPartTitle">任务详情</div>
               <div class="mindPartContent">
+                <div class="mindPareItem">
+                  <div class="flexLeft">任务名称</div>
+                  <div class="flexRight">{{TTask.name}}</div>
+                </div>
                 <div class="mindPareItem">
                   <div class="flexLeft">所属省市</div>
                   <div class="flexRight">{{TTask.province}}-{{TTask.city}}</div>
@@ -36,10 +41,6 @@
                 <div class="mindPareItem">
                   <div class="flexLeft">详细地址</div>
                   <div class="flexRight">{{TTask.address}}</div>
-                </div>
-                <div class="mindPareItem">
-                  <div class="flexLeft">任务名称</div>
-                  <div class="flexRight">{{TTask.name}}</div>
                 </div>
                 <div class="mindPareItem">
                   <div class="flexLeft">预算总额</div>
@@ -63,48 +64,19 @@
                 </div>
               </div>
             </div>
-          <div class="commont">
-            <div class="commontTitle">评论列表</div>
-            <textarea rows="2"></textarea>
-            <div class="commontBtn">提交</div>
-            <div class="commontList">
-              <div class="flexLeft">
-                <img src="../../images/go_logo_1.png" alt="">
-              </div>
-              <div class="flexRight">
-                <div>
-                  <span class="name">果汁</span>
-                  <span class="time">2018-11-13</span>
-                </div>
-                <p>这种方法有一个非常明显的好处就是不必提前知道被居中元素的尺寸了，因为transform中translate偏移的百分比就是相对于元素自身的尺寸而言的。</p>
-              </div>
-            </div>
-            <p class="seeAll">查看全部评论>></p>
-          </div>
+          
         </div>
         <div class="footer">
-          <div @click="collection" :class="{'collectionShow':collectionShow}">
-            <i class="fa fa-heart-o"></i><br>
-            我要收藏
-          </div>
-          <div @click="sereral" :class="{'sereralShow':sereralShow}">
-            <i class="fa fa-thumbs-o-up"></i><br>
-            给他加油
-          </div>
-          <div @click="tryHandle" :class="{'tryShow':tryShow}">
-            <i class="fa fa-hand-pointer-o"></i><br>
-            我想试试
-          </div>
-          <div @click="share" :class="{'shareShow':shareShow}">
-            <i class="fa fa-paper-plane-o"></i><br>
-            我要推荐
-          </div>
+          <x-button @click.native="collection">立即领取</x-button>
+          <!--<div @click="collection" :class="{'collectionShow':collectionShow}">
+            立即领取
+          </div>-->
         </div>
     </section>
 </template>
 <script>
     import {getTTask,getCommentList,insertCollect,giveLike} from 'src/service/getData'
-    // import { XTextarea,Search ,Checker,CheckerItem  } from 'vux'
+    import { XButton  } from 'vux'
     export default {
       data(){
             return{
@@ -119,12 +91,11 @@
             }
         },
         mounted(){
-          this.id = this.$route.params.id;
+          this.id = this.$route.params.id || 15;
           this.getTTask();
-          this.getCommentList();
         },
         components: {
-
+          XButton
         },
         computed: {
            

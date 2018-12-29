@@ -1,68 +1,33 @@
 <template>
     <section class="wrapper">
+          <!-- <head-top head-title="想法中心"></head-top> -->
           <div class="mindItem bgImg title">
-            <div>{{TTask.name}}</div>
+            <div>测试测试测试测试测试测试</div>
             <p>
-              <span style="float:left;">总额：<span class="amount">￥{{TTask.amount}}</span></span>
-              <span style="float:right">已加油：{{TTask.sereralCount}}</span>
+              <span style="float:left;">总额：<span class="amount">￥8080</span></span>
+              <span style="float:right"><i class="icon iconfont icon-dianzan1"></i>已加油：2</span>
             </p>
             <p>
-              <span style="float:left;">感谢金：<span class="amount">￥{{TTask.forGold}}</span></span>
-              <span style="float:right">已评论：{{TTask.commentCount}}</span>
+              <span style="float:left;">推荐感谢金：<span class="amount">￥100</span></span>
+              <span style="float:right">自荐感谢金：<span class="amount">￥200</span></span>
             </p>
           </div>
           <div class="mindItem">
-            <div class="mindPart">
-              <div class="mindPartTitle">发布信息</div>
-              <div class="mindPartContent">
-                <div class="mindPareItem">
-                  <div class="flexLeft">发布时间</div>
-                  <div class="flexRight">{{TTask.createTime | filterCreateTime}}</div>
-                </div>
-                <div class="mindPareItem">
-                  <div class="flexLeft">任务状态</div>
-                  <div class="flexRight">{{TTask.status | filterMindStatus}}</div>
-                </div>
-                
-              </div>
-            </div>
-            <div class="mindPart">
-              <div class="mindPartTitle">任务详情</div>
-              <div class="mindPartContent">
-                <div class="mindPareItem">
-                  <div class="flexLeft">所属省市</div>
-                  <div class="flexRight">{{TTask.province}}-{{TTask.city}}</div>
-                </div>
-                <div class="mindPareItem">
-                  <div class="flexLeft">详细地址</div>
-                  <div class="flexRight">{{TTask.address}}</div>
-                </div>
-                <div class="mindPareItem">
-                  <div class="flexLeft">任务名称</div>
-                  <div class="flexRight">{{TTask.name}}</div>
-                </div>
-                <div class="mindPareItem">
-                  <div class="flexLeft">预算总额</div>
-                  <div class="flexRight">￥{{TTask.amount}}</div>
-                </div>
-                <div class="mindPareItem">
-                  <div class="flexLeft">预算收益</div>
-                  <div class="flexRight">{{TTask.returnType | filterRepay}}</div>
-                </div>
-                <div class="mindPareItem">
-                  <div class="flexLeft">任务描述</div>
-                  <div class="flexRight">{{TTask.taskDescribe}}</div>
-                </div>
-                <div class="mindPareItem">
-                  <div class="flexLeft">任务详细文档</div>
-                  <div class="flexRight download"><span @click="downloadFile(TTask.fileTask)">点击查看</span></div>
-                </div>
-                <div class="mindPareItem">
-                  <div class="flexLeft">感谢金</div>
-                  <div class="flexRight">￥{{TTask.forGold}}</div>
-                </div>
-              </div>
-            </div>
+            <div class="flexRight"> 
+              <div class="flexRightItem">发布人：善谋文化公司</div>
+              <div class="flexRightItem">发布时间：2018-10-20</div>  
+              <div class="flexRightItem">想法类型：任务发布</div>  
+              <div class="flexRightItem">所属地区： 上海市-黄浦区</div>
+              <div class="flexRightItem">回报收益：利润率10%以下</div> 
+              <div class="flexRightItem">任务简介：测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试</div>  
+              <div class="flexRightItem">想法环境：</div>
+              <div class="imgWrapper">
+                <img src="../../images/go_logo.jpg" alt="">
+                <img src="../../images/go_logo.jpg" alt="">
+                <img src="../../images/go_logo.jpg" alt=""> 
+              </div>         
+            </div>            
+          </div>
           <div class="commont">
             <div class="commontTitle">评论列表</div>
             <textarea rows="2"></textarea>
@@ -82,15 +47,25 @@
             <p class="seeAll">查看全部评论>></p>
           </div>
         </div>
-        <div class="bottom">
-          <div class="bottomItem"><i class="fa fa-remove"></i> 撤销</div>
-          <div class="bottomItem" @click="goAddress"><i class="fa fa-wrench"></i> 编辑</div>
-          <div class="bottomItem"><i class="fa fa-check"></i> 完成</div>
+        <div class="footer">
+          <div @click="collection" :class="{'collectionShow':collectionShow}">
+            <i class="fa fa-heart-o"></i>
+            我要收藏
+          </div>
+          <div @click="tryHandle" :class="{'tryShow':tryShow}">
+            <i class="fa fa-hand-pointer-o"></i>
+            我想试试
+          </div>
+          <div @click="share" :class="{'shareShow':shareShow}">
+            <i class="fa fa-paper-plane-o"></i>
+            我要推荐
+          </div>
         </div>
     </section>
 </template>
 <script>
     import {getTTask} from 'src/service/getData'
+    // import { XTextarea,Search ,Checker,CheckerItem  } from 'vux'
     export default {
       data(){
             return{
@@ -98,7 +73,6 @@
                 tryShow: false,  //试试
                 shareShow: false,  //推荐
                 id:'',  //任务id
-                TTask: {},   //任务详情
             }
         },
         mounted(){
@@ -112,13 +86,9 @@
            
         },
         methods: {
-          goAddress() {
-            this.$router.push({name:'editor',params:{id:this.id}});
-          },
           getTTask() {
             getTTask({id:this.id}).then(res => {
               if(res.resultCode == '00000'){
-                this.TTask = res.TTask;
                 console.log(res)
               }else{
                 this.$vux.alert.show({
@@ -139,11 +109,6 @@
           //我要推荐
           share() {
             this.shareShow = true;
-          },
-          //查看详细文档
-          downloadFile(path) {
-            path = 'https://www.baidu.com/img/baidu_jgylogo3.gif';
-            window.location.href = path;
           }
         }
     }
@@ -159,8 +124,15 @@
         background: #fff;
     }
     .bgImg {
+      /* background: url('../../images/own_bg-1.jpg') no-repeat; */
       height: 4rem;
       background-size: 100% 100%;
+      /* filter: url(10px);  FireFox, Chrome, Opera  */
+      /* -webkit-filter: blur(6px); /* Chrome, Opera */
+       /* -moz-filter: blur(6px);
+        -ms-filter: blur(6px);    
+            filter: blur(6px); */
+      /* filter: progid:DXImageTransform.Microsoft.Blur(PixelRadius=6, MakeShadow=false);  */ 
     }
     .title {
       padding: 0.5rem;
@@ -215,49 +187,28 @@
       padding: 0.4rem;
       box-sizing: content-box;
       /* margin-bottom: 1rem; */
-    }
-    .mindItem .mindPart {
-      /* margin-left: 0.4rem; */
-       padding: 0.4rem 0; 
-      border-bottom: 1px solid #f4f4f4;
-    }
-    .mindItem .mindPart .mindPartTitle {
-      font-size: 0.6rem;
-      color: #333;
-      line-height: 1.4rem;
-    }
-    .mindItem .mindPart .mindPartContent {
-      padding-left: 0.4rem;
+    }  
+    .mindItem .flexRight {
+      margin-top: 1rem;
+      color: #666;
       display: flex;
       flex-direction: column;
     }
-    .mindItem .mindPart .mindPartContent .mindPareItem {
+    .flexRightItem {
       flex: 1;
-      margin: 0;
-      line-height: 1.2rem;
-      /* display: flex; */
+      line-height: 1rem;
+      margin-bottom: 6px;
     }
-    .mindItem .download span {
-      color: cadetblue!important;
-      border-bottom: 1px solid cadetblue; 
+    .imgWrapper {
+      display: flex;
     }
-    .mindItem .mindPart .mindPartContent .flexLeft {
-      float: left;
+    .imgWrapper img {
       width: 30%;
-      margin: 0;
-      color: #999;
+      height: 3.2rem;
+      margin-right: 4%;
     }
-    .mindItem .mindPart .mindPartContent .flexRight {
-      float: right;
-      max-width: 70%;
-      flex: 1;
-      margin: 0;
-      color: #999;
-      text-align: justify;
-    }
-    
     .commont {
-      padding: 0.4rem 0;
+      padding: 0.4rem;
       font-size: 0.6rem;
       overflow: hidden;
     }
@@ -329,28 +280,6 @@
     .footer .tryShow i,
     .footer .shareShow i {
       color: cadetblue;
-    }
-    .bottom {
-      position: fixed;
-      bottom: 0;
-      left: 0;
-      width: 100%;
-      height: 1.95rem;
-      z-index: 106;
-      background: #fff;
-      box-shadow: 0 -0.02667rem 0.05333rem rgba(0, 0, 0, 0.1);
-      display: flex;       
-    }
-    .bottomItem {
-      flex: 1;
-      height: 1.95rem;
-      line-height: 1.95rem;
-      text-align: center;
-      font-size: 0.6rem;
-      color: #666;
-    }
-    .bottomItem i {
-      color: #666;
     }
 </style>
 

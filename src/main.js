@@ -5,10 +5,11 @@ import store from './store/'
 import {routerMode} from './config/env'
 import './config/rem'
 import FastClick from 'fastclick'
-import { AlertPlugin,ConfirmPlugin  } from 'vux'
+import { AlertPlugin,ConfirmPlugin,ToastPlugin   } from 'vux'
 import {filterMindType,filterCreateTime,filterRepay,filterMindStatus} from './config/filters' 
 Vue.use(AlertPlugin)
 Vue.use(ConfirmPlugin)
+Vue.use(ToastPlugin)
 Vue.filter('filterMindType', filterMindType);
 Vue.filter('filterCreateTime', filterCreateTime);
 Vue.filter('filterRepay', filterRepay);

@@ -20,6 +20,8 @@
     </div>
 </template>
 <script>
+    import {getOpenid} from 'src/service/getData';
+    import {check} from 'src/config/checkLogin';
     export default {
         data(){
             return{
@@ -27,7 +29,7 @@
             }
         },
         mounted(){
-          
+          this.checkOpenId();
         },
         components: {
             
@@ -36,9 +38,15 @@
            
         },
         methods: {
-           go(path){
-              this.$router.push(path);
-           }
+            go(path){
+                this.$router.push(path);
+            },
+            checkOpenId() {
+                let code = check.getUrlParam('code');
+                if(code){//获取openid
+                    check.getOpenid(code);
+                }
+            },
         }
     }
 </script>

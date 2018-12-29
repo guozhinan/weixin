@@ -110,7 +110,7 @@
             if(this.form.type == '03') return '愿景描述';            
           },
           describePlaceholder() {
-            if(this.form.type == '01' || this.form.type == '02') return '请输入要找的人（合作分享资源）、资金（融资条件）';
+            if(this.form.type == '01' || this.form.type == '02') return '合作分享资源、融资条件';
             // if(this.form.type == '02') return '项目描述';
             if(this.form.type == '03') return '使命 愿景 价值观'; 
           }

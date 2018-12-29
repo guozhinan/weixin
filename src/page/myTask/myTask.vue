@@ -3,28 +3,27 @@
         <div class="noMindList" v-show="mindList.length ==0">
           <div>
             <span class="logo"></span><br><br>
-            <span class="info">暂无收藏~~快去想法中心看看吧</span>
+            <span class="info">暂无任务~~快去想法中心领取吧</span>
           </div>
         </div>
         <div class="mindList" v-show="mindList.length>0">
-          <!-- 跳转想法详情 -->
-          <router-link :to="{name:'mindItem',params:{id:item.id}}" class="mindItem" :key="index" v-for="(item,index) in mindList">
+          <router-link :to="{name:'myMindItem',params:{id:item.id}}" class="mindItem" :key="index" v-for="(item,index) in mindList">
               <div class="mindItemTop">
-                <span class="left">{{item.tTask.type | filterMindType}}</span>
-                <span class="right">{{item.tTask.createTime | filterCreateTime}}</span>
+                <span class="left">{{item.type | filterMindType}}</span>
+                <span class="right">{{item.createTime | filterCreateTime}}</span>
               </div>
-              <div class="mindItemName">{{item.tTask.name}}</div> 
-              <div class="mindItemDes">{{item.tTask.taskDescribe}}</div>
+              <div class="mindItemName">{{item.name}}</div> 
+              <div class="mindItemDes">{{item.taskDescribe}}</div>
               <div class="mindItemAmount">
-                <span class="left">{{item.tTask.status | filterMindStatus}}</span>
-                <span class="right">￥{{item.tTask.amount}}</span>
+                <span class="left">{{item.status | filterMindStatus}}</span>
+                <span class="right">￥{{item.amount}}</span>
               </div>          
           </router-link>
         </div>
     </section>
 </template>
 <script>
-    import {getTCollectList,getOpenid,checkLogin} from 'src/service/getData'
+    import {getTTaskList,getOpenid,checkLogin} from 'src/service/getData'
     import {check} from 'src/config/checkLogin'
     export default {
       data(){
@@ -33,10 +32,11 @@
             }
         },
         mounted(){
+          // sessionStorage.openId = 'ozIdu1Ro-oFTru19uM0JnB_CBfCM';
           let openId = sessionStorage.openId?sessionStorage.openId:null;
           if(openId) {
             if(sessionStorage.isLogin == 'Y'){
-              this.getTCollectList();
+              this.getTTaskList();
             }else {
               check.checkLogin(openId,this.showInfo)
             }
@@ -52,11 +52,11 @@
         },
         methods: {
           //获取收藏列表
-          getTCollectList() {
+          getTTaskList() {
             let openid = sessionStorage.openId;
-            getTCollectList({openid}).then(res => {
+            getTTaskList({openid}).then(res => {
               if(res.resultCode == '00000'){
-                this.mindList = res.TCollectList;
+                this.mindList = res.TTaskList;
               }else{
                 this.$vux.alert.show({
                   title: '提示',

@@ -15,9 +15,9 @@
           <cell is-link @click.native="goto('/myCollection')">
             <span slot="title"><i class="icon iconfont icon-shoucang"></i>&nbsp;&nbsp;&nbsp;我的收藏</span>          
           </cell>
-          <!--<cell link="/develop">
-            <span slot="title"><i class="icon iconfont icon-comment"></i>&nbsp;&nbsp;&nbsp;我的评论</span>                      
-          </cell>-->
+          <cell is-link @click.native="goto('/myTask')">
+            <span slot="title"><i class="icon iconfont icon-comment"></i>&nbsp;&nbsp;&nbsp;我的任务</span>                      
+          </cell>
           <cell is-link @click.native="goto('/myRecommendList')">
             <span slot="title"><i class="icon iconfont icon-tuijian"></i>&nbsp;&nbsp;&nbsp;我的推荐</span>                                  
           </cell>

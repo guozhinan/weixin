@@ -7,17 +7,19 @@ export const getMore = {
         if(scroll){
             scroll = false;
             pageNum++;
-            successFn();
+            successFn(pageNum);
         }
     },
-    isScrollToPageBottom(dom) {
+    isScrollToPageBottom(dom,wrapperDom) {
         let documentHeight = this.getScrollHeight(dom);
-        let viewPortHeight = this.getViewportHeight(dom);
+        let viewPortHeight1 = this.getViewportHeight(dom);
+        let viewPortHeight = this.getViewportHeight(wrapperDom);
         let scrollHeight = this.getScrollTop(dom);
+        console.log('viewPortHeight1',viewPortHeight1);
         console.log('viewPortHeight',viewPortHeight);
         console.log('scrollHeight',scrollHeight);
         
-        return  documentHeight = viewPortHeight - scrollHeight < 20;
+        return  documentHeight = viewPortHeight -viewPortHeight1 - scrollHeight < 20;
     },
     getViewportHeight(dom) {
         let windowHeight = 0;

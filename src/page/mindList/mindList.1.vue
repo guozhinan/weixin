@@ -69,19 +69,21 @@
           </div>
         </div>
         <div ref="mindList" class="mindList" v-show="mindList.length>0">
-          <router-link :to="{name:'mindItem',params:{id:item.id}}" class="mindItem" :key="index" v-for="(item,index) in mindList">
-            <div class="flexLeft">
-              <img :src="item.tUser.wxUser.headimgurl"></img>
-            </div>
-            <div class="flexRight">
-              <div class="flexRightItem title">{{item.name}}</div> 
-              <div class="flexRightItem num">
-                <span>已点赞：{{item.sereralCount}}</span>
-                <span>已评论：{{item.commentCount}}</span>                
+          <div class="listWrapper" ref="listWrapper">
+            <router-link :to="{name:'mindItem',params:{id:item.id}}" class="mindItem" :key="index" v-for="(item,index) in mindList">
+              <div class="flexLeft">
+                <img :src="item.tUser.wxUser.headimgurl"></img>
               </div>
-              <div class="amount">￥{{item.amount}}</div>
-            </div>            
-          </router-link>
+              <div class="flexRight">
+                <div class="flexRightItem title">{{item.name}}</div> 
+                <div class="flexRightItem num">
+                  <span>已点赞：{{item.sereralCount}}</span>
+                  <span>已评论：{{item.commentCount}}</span>                
+                </div>
+                <div class="amount">￥{{item.amount}}</div>
+              </div>            
+            </router-link>
+          </div>
         </div>
     </section>
 </template>
@@ -152,9 +154,10 @@
           this.checkOpenId();
           let _this = this;
           let mindListDom = this.$refs.mindList;
+          let wrapperDom = this.$refs.listWrapper;
           mindListDom.onscroll = function() {
             console.log(1111)
-            if(getMore.isScrollToPageBottom(mindListDom)) {
+            if(getMore.isScrollToPageBottom(mindListDom,wrapperDom)) {
               console.log(222)
               getMore.getScrollData(_this.scroll,_this.submitParams.pageNum,_this.getAllTTask)
             }
@@ -207,13 +210,23 @@
           hideSort() {
             this.masterShow = false;
           },
-          getAllTTask() {
+          getAllTTask(pageNum) {
             let params = this.submitParams;
+            if(pageNum) {
+              this.submitParams.pageNum = pageNum;              
+            }else{
+              this.submitParams.pageNum = 1;     
+            }
             getAllTTask(params).then(res => {
               if(res.resultCode == '00000'){
                 this.mindList = res.TTaskList;
-                // this.mindList = [...res.TTaskList,...res.TTaskList,...res.TTaskList];
-                // this.scroll = true;
+                // this.mindList = [...this.mindList,...res.TTaskList];
+                // if(this.mindList.length>=60){
+                //   this.scroll = false;
+                // }else{
+                //   this.scroll = true;
+                // }
+                
               }else{
                 this.$vux.alert.show({
                   title: '提示',

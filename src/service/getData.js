@@ -54,11 +54,11 @@ export const getAllTTask = (data) => fetch('/task/getAllTTask', data,'POST');
 /**
  * 我的收藏
  */
-export const getTCollectList = (data) => fetch('/task/getTCollectList', data,'POST');
+export const getTCollectList = (data) => fetch('/collect/getTCollectList', data,'POST');
 /**
  * 收藏
  */
-export const insertCollect = (data) => fetch('/task/insertCollect', data,'POST');
+export const insertCollect = (data) => fetch('/collect/insertCollect', data,'POST');
 /**
  * 评论
  */
