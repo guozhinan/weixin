@@ -72,7 +72,7 @@
           <div class="listWrapper" ref="listWrapper">
             <router-link :to="{name:'mindItem',params:{id:item.id}}" class="mindItem" :key="index" v-for="(item,index) in mindList">
               <div class="flexLeft">
-                <img :src="item.tUser.wxUser.headimgurl"></img>
+                <img v-lazy="item.tUser.wxUser.headimgurl" :key="item.tUser.wxUser.headimgurl"></img>
               </div>
               <div class="flexRight">
                 <div class="flexRightItem title">{{item.name}}</div> 
@@ -88,9 +88,8 @@
     </section>
 </template>
 <script>
-    import headTop from 'src/components/header/head'
     import {getAllTTask,getOpenid} from 'src/service/getData'
-    import { Group, Cell, Drawer,PopupPicker,Picker,XInput, XTextarea,Search ,Checker,CheckerItem,XAddress,ChinaAddressV4Data,Value2nameFilter as value2name,XSwitch,Radio    } from 'vux'
+    import { PopupPicker,Picker,ChinaAddressV4Data,Value2nameFilter as value2name,Radio    } from 'vux'
     import {province} from 'src/config/province'
     import {getMore} from 'src/config/getMore'
     import {check} from 'src/config/checkLogin'
@@ -99,8 +98,6 @@
             return{
               mindList: [],
               area: [],
-              addressData: ChinaAddressV4Data,  //省市区三级联动数据
-              district: true,  //true为隐藏所属省市区中的区
               provinceList: province,
               amountList: [
                 {key: '01',value: '0-1000'},
@@ -142,40 +139,19 @@
                 amount: '',  //预算搜索
                 returnType: '', //收益搜索
                 forGold: '',  //感谢金搜索
-                pageNum: 1,
-                pageSize: 20,  
+                // pageNum: 1,
+                // pageSize: 20,  
               },
               scroll: false,
             }
         },
         mounted(){
           this.submitParams.type = this.$route.params.id;
-          // console.log(province)
           this.checkOpenId();
-          let _this = this;
-          let mindListDom = this.$refs.mindList;
-          let wrapperDom = this.$refs.listWrapper;
-          mindListDom.onscroll = function() {
-            console.log(1111)
-            if(getMore.isScrollToPageBottom(mindListDom,wrapperDom)) {
-              console.log(222)
-              getMore.getScrollData(_this.scroll,_this.submitParams.pageNum,_this.getAllTTask)
-            }
-          }
         },
         components: {
-            headTop,
-            Group,
-            Cell,
             PopupPicker,
             Picker,
-            XInput,
-            XTextarea,
-            Checker,
-            CheckerItem,
-            Search,
-            XAddress,
-            XSwitch,
             Radio  
         },
         computed: {
@@ -212,11 +188,11 @@
           },
           getAllTTask(pageNum) {
             let params = this.submitParams;
-            if(pageNum) {
-              this.submitParams.pageNum = pageNum;              
-            }else{
-              this.submitParams.pageNum = 1;     
-            }
+            // if(pageNum) {
+            //   this.submitParams.pageNum = pageNum;              
+            // }else{
+            //   this.submitParams.pageNum = 1;     
+            // }
             getAllTTask(params).then(res => {
               if(res.resultCode == '00000'){
                 this.mindList = res.TTaskList;

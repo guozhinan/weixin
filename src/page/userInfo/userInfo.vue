@@ -3,7 +3,7 @@
         <group class="main">
           <cell class="headImgCell">
             <span slot="title">头像</span>
-            <span><img class="headImg" :src="headImgUrl" alt=""></span>
+            <span><img class="headImg" :key="headImgUrl" v-lazy="headImgUrl" alt=""></span>
           </cell>
           <cell>
             <span slot="title">昵称</span>
@@ -28,20 +28,15 @@
         </group>
         <!-- <button class="changeInfo" v-show="canChange!='N'" @click="editTUser">编辑资料</button>   -->
         <button class="loginOut" @click="loginOut">退出登录</button>
-        <alert v-show="Msg" title="提示"> {{Msg}}</alert>
     </section>
 </template>
 <script>
-    import headTop from 'src/components/header/head'
-    import alertTip from 'src/components/common/alertTip' 
     import {wxAuthor} from 'src/config/weixin'
     import {loginOut,editTUser} from 'src/service/getData';
-    import { Group, Cell, Drawer,PopupPicker,Picker,XInput, XTextarea ,Checker,CheckerItem,Alert    } from 'vux'
+    import { Group, Cell} from 'vux'
     export default {
       data(){
             return{
-              MsgShow: false, //是否显示弹框
-              Msg:'',//弹框提示语
               user: '',//用户名
               isLogin: 'Y', //是否登陆，N表示未登陆
               headImgUrl: '',
@@ -51,6 +46,7 @@
               phone: '', //手机号
               openId: '', 
               canChange: 'Y',
+              sex: '',
             }
         },
         filters: {
@@ -65,6 +61,7 @@
             this.nickname = userInfo.nickname;
             this.phone = userInfo.phone;
             this.headImgUrl = userInfo.headImgUrl;
+            console.log(this.headImgUrl)
             this.openId = userInfo.openId;
             this.sex = userInfo.sex;
             if(userInfo.username&&userInfo.email){
@@ -75,17 +72,8 @@
         //   this.checkOpenId();
         },
         components: {
-            headTop,
-            alertTip,
             Group,
             Cell,
-            PopupPicker,
-            Picker,
-            XInput,
-            XTextarea,
-            Checker,
-            CheckerItem,
-            Alert,
         },
         computed: {
            

@@ -46,7 +46,7 @@
               <input class="ownInput" id="forGold" type="tel" v-model="form.forGold" placeholder="推荐被推荐者各45%,平台管理费10%" maxlength="20">
             </div>
         </group>
-        <x-button ref="publish" @click.native="public">发布</x-button>
+        <x-button ref="publish" @click.native="publicMind">发布</x-button>
     </section>
 </template>
 <script>
@@ -121,7 +121,9 @@
             },
             uploadIntroduce (e) {
               let _this = this;
-              this.form.fileTaskType = e.target.files[0].type;
+              let typeArr = e.target.files[0].name.split('.');
+              this.form.fileTaskType = typeArr[typeArr.length-1];
+              console.log(this.form.fileTaskType)
               this.form.fileTaskSize = e.target.files[0].size;
               this.form.fileTaskname = e.target.files[0].name;
               console.log(e.target.files[0])
@@ -134,8 +136,10 @@
             uploadBusinessCanvas (e) {
               let _this = this;
               console.log(e.target.files[0])
-              this.form.blueprintfileType = e.target.files[0].type;
-              this.form.blueprintfileSize = e.target.files[0].size;
+              let typeArr = e.target.files[0].name.split('.');
+              this.form.fileBlueprintType = typeArr[typeArr.length-1];
+              // this.form.fileBlueprintType = e.target.files[0].type;
+              this.form.fileTaskSize = e.target.files[0].size;
               this.form.blueprintfilename = e.target.files[0].name;
               let reader=new FileReader();
               reader.readAsDataURL(e.target.files[0]);
@@ -143,9 +147,9 @@
                 _this.form.fileBlueprint = this.result.split(';base64,')[1];
               }   
             },
-            public() {
-              console.log(this.$refs.publish)
-              this.form.openid = sessionStorage.openId || 'ozIdu1Ro-oFTru19uM0JnB_CBfCM';
+            publicMind() {
+              // console.log(this.$refs.publish)
+              this.form.openid = sessionStorage.openId;
               [this.form.province,this.form.city] = this.areaName;
               let obj = {};
               let keys = Object.keys(this.form);
@@ -198,12 +202,12 @@
                 this.$vux.alert.show({content: '请输入任务描述'});
                 return false;
               }
-              if(!this.form.fileTaskname || !this.form.fileTask) {
-                this.$vux.alert.show({content: '请上传任务详细文档'});
-                return false;
-              }
-              if(this.form.fileTaskType!='application/msword'&&this.form.fileTaskType!='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'&&this.form.fileTaskType!='application/vnd.ms-excel') {
-                this.$vux.alert.show({content: '任务详细文档仅支持word、excel，请重新上传'});
+              // if(!this.form.fileTaskname || !this.form.fileTask) {
+              //   this.$vux.alert.show({content: '请上传任务详细文档'});
+              //   return false;
+              // }
+              if(this.form.fileTaskname && this.form.fileTaskType!='doc'&&this.form.fileTaskType!='docx'&&this.form.fileTaskType!='xls'&&this.form.fileTaskType!='xlsx'&&this.form.fileTaskType!='pdf') {
+                this.$vux.alert.show({content: '任务详细文档仅支持word、excel、pdf，请重新上传'});
                 return false;
               }
               if(this.form.fileTaskSize > 5*1024*1024){
@@ -211,12 +215,13 @@
                 return false;
               }
               if(this.form.type == '03') {
-                if(!this.form.fileBlueprint || !this.form.blueprintfilename) {
-                  this.$vux.alert.show({content: '请上传商业画布'});
-                  return false;
-                }
-                if(this.form.fileBlueprintType!='application/msword'&&this.form.fileBlueprintType!='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'&&this.form.fileBlueprintType!='application/vnd.ms-excel'&&this.form.fileBlueprintType!='application/vnd.ms-powerpoint'&&this.form.fileBlueprintType!='application/vnd.openxmlformats-officedocument.presentationml.presentation') {
-                  this.$vux.alert.show({content: '商业画布仅支持word、excel、ppt，请重新上传'});
+                // if(!this.form.fileBlueprint || !this.form.blueprintfilename) {
+                //   this.$vux.alert.show({content: '请上传商业画布'});
+                //   return false;
+                // }
+                if(this.form.fileBlueprint && this.form.fileBlueprintType!='doc'&&this.form.fileBlueprintType!='docx'&&this.form.fileBlueprintType!='xls'&&this.form.fileBlueprintType!='xlsx'&&this.form.fileBlueprintType!='ppt'&&this.form.fileBlueprintType!='pptx'&&this.form.fileBlueprintType!='pdf') {
+                  console.log(this.form.fileBlueprintType)
+                  this.$vux.alert.show({content: '商业画布仅支持word、excel、pdf、ppt，请重新上传'});
                   return false;
                 }
                 if(this.form.fileTaskSize > 5*1024*1024){
@@ -234,12 +239,13 @@
               }
               return true;
             },
-            insertTask(params,ele) {
-              insertTask(params,ele).then(res => {
+            insertTask(params) {
+              insertTask(params).then(res => {
                 if(res.resultCode == '00000'){
                   this.$vux.alert.show({
                     content: '发布成功'
                   });
+                  // window.location.reload();
                 }else{
                   this.$vux.alert.show({
                     title: '提示',

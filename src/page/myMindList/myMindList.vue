@@ -28,7 +28,7 @@
     export default {
       data(){
             return{
-              mindList:[]
+              mindList:[],
             }
         },
         mounted(){
@@ -78,7 +78,7 @@
           showInfo() {
             let isLogin = sessionStorage.isLogin;
             if(sessionStorage.isLogin == 'Y'){
-              this.getTCollectList();
+              this.getTTaskList();
             }else{
               sessionStorage.currentUrl = location.href;
               this.$router.push('/login');

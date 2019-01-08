@@ -7,23 +7,23 @@
           </div>
         </div>
         <div class="mindList" v-show="mindList.length>0">
-          <router-link :to="{name:'mindItem',params:{id:item.id}}" class="mindItem" :key="index" v-for="(item,index) in mindList">
+          <router-link :to="{name:'mindItem',params:{id:item.taskId}}" class="mindItem" :key="index" v-for="(item,index) in mindList">
               <div class="mindItemTop">
-                <span class="left">{{item.type | filterMindType}}</span>
-                <span class="right">{{item.createTime | filterCreateTime}}</span>
+                <span class="left">{{item.tTask.type | filterMindType}}</span>
+                <span class="right">{{item.tTask.createTime | filterCreateTime}}</span>
               </div>
-              <div class="mindItemName">{{item.name}}</div> 
-              <div class="mindItemDes">{{item.taskDescribe}}</div>
+              <div class="mindItemName">{{item.tTask.name}}</div> 
+              <div class="mindItemDes">{{item.tTask.taskDescribe}}</div>
               <div class="mindItemAmount">
-                <span class="left">{{item.status | filterMindStatus}}</span>
-                <span class="right">￥{{item.amount}}</span>
+                <!-- <span class="left">{{item.tTask.status | filterMindStatus}}</span> -->
+                <span class="left">￥{{item.tTask.amount}}</span>
               </div>          
           </router-link>
         </div>
     </section>
 </template>
 <script>
-    import {getTTaskList,getOpenid,checkLogin} from 'src/service/getData'
+    import {getShareList,getOpenid,checkLogin} from 'src/service/getData'
     import {check} from 'src/config/checkLogin'
     export default {
       data(){
@@ -36,7 +36,7 @@
           let openId = sessionStorage.openId?sessionStorage.openId:null;
           if(openId) {
             if(sessionStorage.isLogin == 'Y'){
-              this.getTTaskList();
+              this.getShareList();
             }else {
               check.checkLogin(openId,this.showInfo)
             }
@@ -52,11 +52,11 @@
         },
         methods: {
           //获取收藏列表
-          getTTaskList() {
+          getShareList() {
             let openid = sessionStorage.openId;
-            getTTaskList({openid}).then(res => {
+            getShareList({openid}).then(res => {
               if(res.resultCode == '00000'){
-                this.mindList = res.TTaskList;
+                this.mindList = res.TShareList;
               }else{
                 this.$vux.alert.show({
                   title: '提示',
@@ -164,7 +164,8 @@
       font-size: 0.55rem;
     }
     .mindItemAmount .left {
-      color: #999;
+      /* color: #999; */
+      color: #f60; 
     }
     .mindItemAmount .right {
       color: #f60; 

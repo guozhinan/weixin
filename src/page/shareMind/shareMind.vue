@@ -2,15 +2,6 @@
     <section class="wrapper">
           <div class="mindItem bgImg title">
             <div>您的朋友分享了一个任务，等待您领取</div> 
-            <!--<div>{{TTask.name}}</div>
-            <p>
-              <span style="float:left;">总额：<span class="amount">￥{{TTask.amount}}</span></span>
-              <span style="float:right">已加油：{{TTask.sereralCount}}</span>
-            </p>
-            <p>
-              <span style="float:left;">感谢金：<span class="amount">￥{{TTask.forGold}}</span></span>
-              <span style="float:right">已评论：{{TTask.commentCount}}</span>
-            </p>-->
           </div>
           <div class="mindItem">
             <!--<div class="mindPart">
@@ -67,7 +58,7 @@
           
         </div>
         <div class="footer">
-          <x-button @click.native="collection">立即领取</x-button>
+          <x-button @click.native="receive">立即领取</x-button>
           <!--<div @click="collection" :class="{'collectionShow':collectionShow}">
             立即领取
           </div>-->
@@ -75,8 +66,9 @@
     </section>
 </template>
 <script>
-    import {getTTask,getCommentList,insertCollect,giveLike} from 'src/service/getData'
+    import {getTTask,getCommentList,shareInfo,receive,getOpenid} from 'src/service/getData'
     import { XButton  } from 'vux'
+    import {check} from 'src/config/checkLogin'
     export default {
       data(){
             return{
@@ -88,11 +80,12 @@
                 TTask: {},   //任务详情
                 user: {},
                 isLogin: 'Y',  //判断是否登录
+                taskId: '',  //任务Id
             }
         },
         mounted(){
-          this.id = this.$route.params.id || 15;
-          this.getTTask();
+          this.shareId = this.$route.query.shareId;
+          this.checkOpenId();
         },
         components: {
           XButton
@@ -102,11 +95,12 @@
         },
         methods: {
           //获取任务详情
-          getTTask() {
-            getTTask({id:this.id}).then(res => {
+          shareInfo() {
+            shareInfo({id:this.shareId}).then(res => {
               if(res.resultCode == '00000'){
-                this.TTask = res.TTask;
-                this.user = res.TTask.tUser.wxUser;
+                this.TTask = res.tShare.tTask;
+                this.taskId = res.tShare.taskId;
+                // this.user = res.tShare.tUser.wxUser;
               }else{
                 this.$vux.alert.show({title: '提示',content: res.resultMsg});
               }
@@ -122,73 +116,39 @@
               }
             })
           },
-          //收藏接口
-          insertCollect() {
-             insertCollect({
-               openid: 'ozIdu1Ro-oFTru19uM0JnB_CBfCM',
-               taskId: this.id
-             }).then(res => {
-                if(res.resultCode == '00000'){
-                  this.$vux.toast.text('收藏成功')
-                  this.collectionShow = true;
-                }else{
-                  this.$vux.alert.show({title: '提示',content: res.resultMsg});
-                }
-             }) 
-          },
-          //加油接口
-          giveLike() {
-            giveLike({
+          //我想试试接口
+          receive() {
+            receive({
               openid: sessionStorage.openId,
-              id: this.id,
-              sereralCount: this.TTask.sereralCount
+              taskId: this.taskId,
+              shareId:this.shareId
             }).then(res => {
               if(res.resultCode == '00000'){
-                this.$vux.toast.text('加油成功')
-                this.sereralShow = true;
+                this.$vux.toast.text('任务领取成功')
               }else{
                 this.$vux.alert.show({title: '提示',content: res.resultMsg});
               }
             })
           },
-           //我要收藏
-          collection() {
-            if(this.isLogin == 'Y'){
-              this.insertCollect();
-            }else{
-              sessionStorage.currentUrl = location.href;
-              this.$router.push('/login');
-            }
-          },
-          //给他加油
-          sereral() {
-            if(this.isLogin == 'Y'){
-              this.giveLike();
-            }else{
-              sessionStorage.currentUrl = location.href;
-              this.$router.push('/login');
-            }
-          },
-          //我想试试
-          tryHandle() {
-            this.tryShow = true;
-            if(this.isLogin == 'Y'){
-              // this.insertCollect();
-            }else{
-              sessionStorage.currentUrl = location.href;
-              this.$router.push('/login');
-            }
-          },
-          //我要推荐
-          share() {
-            this.shareShow = true;
-            if(this.isLogin == 'Y'){
-              // this.insertCollect();
-            }else{
-              sessionStorage.currentUrl = location.href;
-              this.$router.push('/login');
-            }
-          },
+          //判断是否有openId
+            checkOpenId() {
+              let code = check.getUrlParam('code');
+              if(sessionStorage.openId){//判断是否登陆
+                check.checkLogin(sessionStorage.openId,this.shareInfo)
+              }else if(code){//获取openid
+                check.getOpenid(code,this.shareInfo);
+              }
+            },
+            // showInfo() {
+            //   let isLogin = sessionStorage.isLogin;
+            //   if(sessionStorage.isLogin != 'Y'){
+            //     sessionStorage.currentUrl = location.href;
+            //     this.$router.push('/login');
+            //   }
+            // },
+
+
+         
           //查看详细文档
           downloadFile(path) {
             path = 'https://www.baidu.com/img/baidu_jgylogo3.gif';
@@ -225,11 +185,12 @@
     }
     .title div {
       font-size: 0.8rem;
-      height: 1.5rem;
-      line-height: 1.5rem;
+      height: 3rem;
+      line-height: 3rem;
       color: #333;
       letter-spacing: 1px;
       margin-top: 0.6rem;
+      text-align: center;
     }
     .title p {
       overflow: hidden;
@@ -368,26 +329,18 @@
       height: 1.95rem;
       width: 100%;
       bottom: 0;
-      display: flex;
       z-index: 103;
       background: #fff;
       font-size: 0.6rem;
       text-align: center;
       line-height: 0.95rem;
-      // line-height: 1.95rem;
     }
-    .footer div {
-      flex: 1;
+    .footer .weui-btn_default {
+      width: 80%;
+      background: cadetblue;
+      color: #fff;
+      border-radius: 4px;
     }
-    .footer .collectionShow,
-    .footer .tryShow,
-    .footer .shareShow,
-    .footer .collectionShow i,
-    .footer .tryShow i,
-    .footer .shareShow i,
-    .footer .sereralShow,
-    .footer .sereralShow i {
-      color: cadetblue;
-    }
+
 </style>
 

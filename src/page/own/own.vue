@@ -2,7 +2,7 @@
     <section class="wrapper">
         <div class="top" @click = "gotoAddress('/login')">
            <div class="topLeft">
-              <img :src="headImgUrl">
+              <img v-lazy="headImgUrl" :key="headImgUrl">
            </div>
            <div class="topRight">
              <div class="login"><span v-show="isLogin == 'Y'">{{userName}}</span><span v-show="isLogin == 'N'">用户登陆</span></div>
@@ -21,7 +21,7 @@
           <cell is-link @click.native="goto('/myRecommendList')">
             <span slot="title"><i class="icon iconfont icon-tuijian"></i>&nbsp;&nbsp;&nbsp;我的推荐</span>                                  
           </cell>
-          <cell link="/develop">
+          <cell is-link @click.native="goto('/earnings')">
             <span slot="title"><i class="icon iconfont icon-jiangli"></i>&nbsp;&nbsp;&nbsp;我的奖励</span>                                              
           </cell>
         </div>
@@ -63,6 +63,8 @@
               }else{
                 this.headImgUrl = headImg;
               }
+              console.log('headImgUrlheadImgUrlheadImgUrl')
+              console.log(this.headImgUrl);
             },
             gotoAddress(path){
               if(this.isLogin == 'Y'){

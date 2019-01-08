@@ -1,8 +1,14 @@
 //微信分享
+import {getSignature} from 'src/service/getData'
+import wx from 'weixin-js-sdk'
+import * as constant from './constant';
 export const wxshare = {
     init: function(title,desc,link,imgUrl) {
+        let noncestr = this.compute.randomString();
+        let timestamp = this.compute.timestamp();
+        let url = location.href.split('#')[0];
         try{
-            wxshare.ajax.signature();
+            wxshare.ajax.signature(noncestr,timestamp,url);
         }catch(e){
             console.log(e);
         }
@@ -44,15 +50,17 @@ export const wxshare = {
 
     },
     ajax: {
-        signature: function() {
-            getSignature().then(res => {
+        signature: function(noncestr,timestamp,url) {
+            getSignature({
+                noncestr,timestamp,url
+            }).then(res => {
                 if(res.resultCode == '00000'){
                     wx.config({
                         debug: false, // 开启调试模式,
-                        appId: res.appId, // 必填，企业号的唯一标识
-                        timestamp: res.timestamp, // 必填，生成签名的时间戳
-                        nonceStr: res.nonceStr, // 必填，生成签名的随机串
-                        signature: res.signature,// 必填，签名
+                        appId: constant.APPID, // 必填，企业号的唯一标识
+                        timestamp: timestamp, // 必填，生成签名的时间戳
+                        nonceStr: noncestr, // 必填，生成签名的随机串
+                        signature: res.sign,// 必填，签名
                         jsApiList: [
                             'hideMenuItems',
                             'updateAppMessageShareData',

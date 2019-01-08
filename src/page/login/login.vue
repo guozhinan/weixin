@@ -7,7 +7,7 @@
               <input id="phone" placeholder="请输入手机号" maxlength="11" type="tel" v-model="phone"><span @click="clearPhone"><icon v-show="phone" type="clear"></icon></span>
             </label>
             <label for="verifyCode">
-              <input id="verifyCode" placeholder="请输入手机验证码" maxlength="6" type="tel" v-model="verifyCode"/><span class="getCode" @click="getVerifyCode">获取验证码</span>
+              <input id="verifyCode" placeholder="请输入手机验证码" maxlength="6" type="tel" v-model="verifyCode"/><div class="getCode" @click="getVerifyCode">获取验证码</div>
             </label>
             <button class="login" @click="login">确定</button>
             <p class="agreeInfo">点击确定，即表示已阅读并同意<span @click="gotoAddress('/agreement')">《用户注册协议》</span></p>
@@ -16,10 +16,8 @@
     </section>
 </template>
 <script>
-    import headTop from 'src/components/header/head'
-    import alertTip from 'src/components/common/alertTip' 
     import {getVerifyCode,login} from 'src/service/getData'
-    import { Group, Cell, Drawer,PopupPicker,Picker,XInput, XTextarea ,Checker,CheckerItem,Icon  } from 'vux'
+    // import { Group, Cell, Drawer,PopupPicker,Picker,XInput, XTextarea ,Checker,CheckerItem,Icon  } from 'vux'
     export default {
       data(){
             return{
@@ -31,19 +29,19 @@
         mounted(){
           
         },
-        components: {
-            headTop,
-            alertTip,
-            Group,
-            Cell,
-            PopupPicker,
-            Picker,
-            XInput,
-            XTextarea,
-            Checker,
-            CheckerItem,
-            Icon
-        },
+        // components: {
+        //     headTop,
+        //     alertTip,
+        //     Group,
+        //     Cell,
+        //     PopupPicker,
+        //     Picker,
+        //     XInput,
+        //     XTextarea,
+        //     Checker,
+        //     CheckerItem,
+        //     Icon
+        // },
         computed: {
            
         },
@@ -153,7 +151,7 @@
     }
     .top .getCode {
       display: inline-block;
-      padding: 0 6px;
+      padding: 0 auto;
       height: 20px;
       line-height: 20px;
       border-radius: 10px;
@@ -161,6 +159,8 @@
       border: 1px solid cadetblue;
       color: cadetblue;
       margin-top: 10px;
+      width: 3.5rem;
+      text-align: center;
     }
     .top .login {
       background: cadetblue;

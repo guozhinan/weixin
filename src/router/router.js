@@ -1,24 +1,25 @@
 import App from '../App'
 
-const publish = r => require.ensure([], () => r(require('../page/publish/publish')), 'download')
-const mindList = r => require.ensure([], () => r(require('../page/mindList/mindList.1')), 'download')
-const mindItem = r => require.ensure([], () => r(require('../page/mindItem/mindItem')), 'download')
-const own = r => require.ensure([], () => r(require('../page/own/own')), 'download')
-const login = r => require.ensure([], () => r(require('../page/login/login')), 'download')
-const registered = r => require.ensure([], () => r(require('../page/registered/registered')), 'download')
-const advertising = r => require.ensure([], () => r(require('../page/advertising/advertising')), 'download')
-const agreement = r => require.ensure([], () => r(require('../page/agreement/agreement')), 'download')
-const userInfo = r => require.ensure([], () => r(require('../page/userInfo/userInfo')), 'download')
-const develop = r => require.ensure([], () => r(require('../page/develop/develop')), 'download')
-const myMindList = r => require.ensure([], () => r(require('../page/myMindList/myMindList')), 'download')
-const myMindItem = r => require.ensure([], () => r(require('../page/myMindItem/myMindItem')), 'download')
-const editor = r => require.ensure([], () => r(require('../page/editor/editor')), 'download')
-const search = r => require.ensure([], () => r(require('../page/search/search')), 'download')
-const myCollection = r => require.ensure([], () => r(require('../page/myCollection/myCollection')), 'download')
-const myRecommendList = r => require.ensure([], () => r(require('../page/myRecommendList/myRecommendList')), 'download')
-const myTask = r => require.ensure([], () => r(require('../page/myTask/myTask')), 'download')
-const shareMind = r => require.ensure([], () => r(require('../page/shareMind/shareMind')), 'download')
-
+const publish = r => require.ensure([], () => r(require('../page/publish/publish')), 'publish')
+const mindList = r => require.ensure([], () => r(require('../page/mindList/mindList.1')), 'mindList')
+const mindItem = r => require.ensure([], () => r(require('../page/mindItem/mindItem')), 'mindItem')
+const own = r => require.ensure([], () => r(require('../page/own/own')), 'own')
+const login = r => require.ensure([], () => r(require('../page/login/login')), 'login')
+// const registered = r => require.ensure([], () => r(require('../page/registered/registered')), 'registered')
+const advertising = r => require.ensure([], () => r(require('../page/advertising/advertising')), 'advertising')
+const agreement = r => require.ensure([], () => r(require('../page/agreement/agreement')), 'agreement')
+const userInfo = r => require.ensure([], () => r(require('../page/userInfo/userInfo')), 'userInfo')
+const develop = r => require.ensure([], () => r(require('../page/develop/develop')), 'develop')
+const myMindList = r => require.ensure([], () => r(require('../page/myMindList/myMindList')), 'myMindList')
+const myMindItem = r => require.ensure([], () => r(require('../page/myMindItem/myMindItem')), 'myMindItem')
+const editor = r => require.ensure([], () => r(require('../page/editor/editor')), 'editor')
+const myCollection = r => require.ensure([], () => r(require('../page/myCollection/myCollection')), 'myCollection')
+const myRecommendList = r => require.ensure([], () => r(require('../page/myRecommendList/myRecommendList')), 'myRecommendList')
+const myTask = r => require.ensure([], () => r(require('../page/myTask/myTask')), 'myTask')
+const myTaskMind = r => require.ensure([], () => r(require('../page/myTaskMind/myTaskMind')), 'myTaskMind')
+const shareMind = r => require.ensure([], () => r(require('../page/shareMind/shareMind')), 'shareMind')
+const earnings = r => require.ensure([], () => r(require('../page/earnings/earnings')), 'earnings')
+const video = r => require.ensure([], () => r(require('../page/video/video')), 'video')
 
 export default [{
     path: '/',
@@ -27,7 +28,7 @@ export default [{
         //一键发布
         {
             path: '/publish',
-            component: publish,
+            component: publish,            
             meta: {
                 title: '一键发布'
             }
@@ -62,14 +63,6 @@ export default [{
             component: login,
             meta: {
                 title: '登录'
-            }
-        },
-        // 注册
-        {
-            path: '/registered',
-            component: registered,
-            meta: {
-                title: '注册'
             }
         },
         //六度理论
@@ -125,14 +118,6 @@ export default [{
             }
         },
         {
-            path: '/search',
-            name: 'search',
-            component: search,
-            meta: {
-                title: '搜索请求'
-            }
-        },
-        {
             path: '/myCollection',
             name: 'myCollection',
             component: myCollection,
@@ -157,12 +142,32 @@ export default [{
             }
         },
         {
+            path: '/myTaskMind/:id',
+            name: 'myTaskMind',
+            component: myTaskMind,
+            meta: {
+                title: '我的任务'
+            }
+        },
+        {
             path: '/shareMind',
             name: 'shareMind',
             component: shareMind,
             meta: {
                 title: '任务领取'
             }
+        },
+        {
+            path: '/earnings',
+            name: 'earnings',
+            component: earnings,
+            meta: {
+                title: '我的奖励'
+            }
+        },
+        {
+            path: '/video',
+            component: video
         }
     ]
 }]

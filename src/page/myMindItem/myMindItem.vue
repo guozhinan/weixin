@@ -65,38 +65,53 @@
             </div>
           <div class="commont">
             <div class="commontTitle">评论列表</div>
-            <textarea rows="2"></textarea>
-            <div class="commontBtn">提交</div>
+            <!-- <textarea rows="2"></textarea>
+            <div class="commontBtn">提交</div> -->
+            <div class="noCommontList" v-show="TCommentList.length==0">暂无评论</div>
             <div class="commontList">
-              <div class="flexLeft">
-                <img src="../../images/go_logo_1.png" alt="">
-              </div>
-              <div class="flexRight">
-                <div>
-                  <span class="name">果汁</span>
-                  <span class="time">2018-11-13</span>
+              <section v-show="showOne&&TCommentList.length>0">
+                <div class="flexLeft">
+                  <img :src="user.headimgurl" alt="">
                 </div>
-                <p>这种方法有一个非常明显的好处就是不必提前知道被居中元素的尺寸了，因为transform中translate偏移的百分比就是相对于元素自身的尺寸而言的。</p>
-              </div>
+                <div class="flexRight">
+                  <div>
+                    <span class="name">{{user.nickname}}</span>
+                    <span class="time">{{commentListOne.createTime | filterCreateTime}}</span>
+                  </div>
+                  <p>{{commentListOne.content}}</p>
+                </div>
+              </section>
+              <section v-for="(item,index) in TCommentList" :key="index" v-show="showMore&&TCommentList.length>0">
+                <div class="flexLeft">
+                  <img :src="item.tUser.wxUser.headimgurl" alt="">
+                </div>
+                <div class="flexRight">
+                  <div>
+                    <span class="name">{{item.tUser.wxUser.nickname}}</span>
+                    <span class="time">{{item.createTime | filterCreateTime}}</span>
+                  </div>
+                  <p>{{item.content}}</p>
+                </div>
+              </section>
             </div>
-            <p class="seeAll">查看全部评论>></p>
+            <p class="seeAll" @click="seeAll" v-show="showOne&&TCommentList.length>0">查看全部评论>></p>
           </div>
         </div>
         <div class="bottom">
-          <div class="bottomItem">
+          <div class="bottomItem" @click="backout">
             <i class="fa fa-remove"></i><span>撤销</span>
           </div>
           <div class="bottomItem" @click="goAddress">
             <i class="fa fa-wrench"></i><span>编辑</span>
           </div>
-          <div class="bottomItem">
+          <div class="bottomItem" @click="complete">
             <i class="fa fa-check"></i><span>完成</span>
           </div>
         </div>
     </section>
 </template>
 <script>
-    import {getTTask} from 'src/service/getData'
+    import {getTTask,getCommentList,updateTask} from 'src/service/getData'
     export default {
       data(){
             return{
@@ -105,6 +120,11 @@
                 shareShow: false,  //推荐
                 id:'',  //任务id
                 TTask: {},   //任务详情
+                TCommentList: [],  //评论列表
+                showOne: true, //显示一条评论
+                showMore: false, //显示全部评论
+                commentListOne: {}, //第一条评论
+                user: {}
             }
         },
         mounted(){
@@ -126,11 +146,26 @@
               if(res.resultCode == '00000'){
                 this.TTask = res.TTask;
                 console.log(res)
+                this.getCommentList();
               }else{
                 this.$vux.alert.show({
                   title: '提示',
                   content: res.resultMsg
                 });
+              }
+            })
+          },
+          //获取评论列表
+          getCommentList(){
+            getCommentList({taskId:this.id}).then(res => {
+              if(res.resultCode == '00000'){
+                this.TCommentList = res.TCommentList;
+                if(this.TCommentList.length>0){
+                  this.commentListOne = this.TCommentList[0];
+                  this.user = this.TCommentList[0].tUser.wxUser;
+                }
+              }else{
+                this.$vux.alert.show({title: '提示',content: res.resultMsg});
               }
             })
           },
@@ -150,6 +185,33 @@
           downloadFile(path) {
             path = 'https://www.baidu.com/img/baidu_jgylogo3.gif';
             window.location.href = path;
+          },
+           //查看全部评论
+          seeAll() {
+            this.showOne = false;
+            this.showMore = true;
+          },
+          //撤销
+          backout() {
+            this.updateTask('03');
+          },
+          //完成
+          complete() {
+            this.updateTask('05');
+          },
+          updateTask(status) {
+            updateTask({
+              id: this.id,
+              status: status
+            }).then(res => {
+              if(res.resultCode == '00000'){
+                if(status == '03') this.$vux.toast.text('任务撤销成功');
+                if(status == '05') this.$vux.toast.text('任务完成');
+                this.$router.push('/myMindList');
+              }else{
+                this.$vux.alert.show({title: '提示',content: res.resultMsg});
+              }
+            })
           }
         }
     }
@@ -286,11 +348,21 @@
       border-radius: 0.6rem;
       margin-bottom: 0.6rem;
     }
+    .noCommontList {
+      text-align: center;
+      font-size: 0.6rem;
+      padding-top: 0.6rem;
+      color: #666;
+    }
     .commontList {
       clear: both;
+      /* display: flex; */
+      padding: 0.6rem 0 0.4rem;
+      
+    }
+    .commontList section {
       display: flex;
-      padding-bottom: 0.4rem;
-      border-bottom: 1px solid #d4d4d4;
+      margin: 0.5rem;
     }
     .commontList .flexLeft {
       width: 2.2rem;
@@ -309,7 +381,8 @@
       color: #666;
     }
     .seeAll {
-      margin-top: 0.6rem;
+      border-top: 1px solid #d4d4d4;
+      padding-top: 0.6rem;
       font-size: 0.6rem;
       text-align: center;
     }
@@ -319,7 +392,7 @@
       width: 100%;
       bottom: 0;
       display: flex;
-      z-index: 103;
+      z-index: 107;
       background: #fff;
       font-size: 0.6rem;
       text-align: center;
@@ -344,7 +417,7 @@
       height: 1.95rem;
       z-index: 106;
       background: #fff;
-      box-shadow: 0 -0.02667rem 0.05333rem rgba(0, 0, 0, 0.1);
+      /* box-shadow: 0 -0.02667rem 0.05333rem rgba(0, 0, 0, 0.1); */
       display: flex;       
     }
     .bottomItem {
@@ -360,6 +433,7 @@
     }
     .bottomItem span {
       flex: 1;
+      color: #666;
     }
     .bottomItem i {
       flex: 1;

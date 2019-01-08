@@ -8,7 +8,7 @@
         </div>
         <div class="mindList" v-show="mindList.length>0">
           <!-- 跳转想法详情 -->
-          <router-link :to="{name:'mindItem',params:{id:item.id}}" class="mindItem" :key="index" v-for="(item,index) in mindList">
+          <router-link :to="{name:'mindItem',params:{id:item.taskId}}" class="mindItem" :key="index" v-for="(item,index) in mindList">
               <div class="mindItemTop">
                 <span class="left">{{item.tTask.type | filterMindType}}</span>
                 <span class="right">{{item.tTask.createTime | filterCreateTime}}</span>

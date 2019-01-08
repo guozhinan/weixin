@@ -7,6 +7,8 @@ import './config/rem'
 import FastClick from 'fastclick'
 import { AlertPlugin,ConfirmPlugin,ToastPlugin   } from 'vux'
 import {filterMindType,filterCreateTime,filterRepay,filterMindStatus} from './config/filters' 
+import VueLazyLoad from 'vue-lazyload'
+
 Vue.use(AlertPlugin)
 Vue.use(ConfirmPlugin)
 Vue.use(ToastPlugin)
@@ -14,6 +16,10 @@ Vue.filter('filterMindType', filterMindType);
 Vue.filter('filterCreateTime', filterCreateTime);
 Vue.filter('filterRepay', filterRepay);
 Vue.filter('filterMindStatus', filterMindStatus);
+Vue.use(VueLazyLoad,{
+    error:require('src/images/go_logo_1.png'),
+    loading:require('src/images/go_logo_1.png')
+})
 
 if ('addEventListener' in document) {
     document.addEventListener('DOMContentLoaded', function() {

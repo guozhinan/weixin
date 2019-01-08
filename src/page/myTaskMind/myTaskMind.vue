@@ -1,6 +1,5 @@
 <template>
     <section class="wrapper">
-          <div class="mask" v-show="maskShow" @click="hideMask"></div>
           <div class="mindItem bgImg title">
             <div>{{TTask.name}}</div>
             <p>
@@ -98,24 +97,6 @@
             <p class="seeAll" @click="seeAll" v-show="showOne&&TCommentList.length>1">查看全部评论>></p>
           </div>
         </div>
-        <div class="footer">
-          <div @click="collection" :class="{'collectionShow':collectionShow}">
-            <i class="fa fa-heart-o"></i><br>
-            我要收藏
-          </div>
-          <div @click="sereral" :class="{'sereralShow':sereralShow}">
-            <i class="fa fa-thumbs-o-up"></i><br>
-            给他加油
-          </div>
-          <div @click="tryHandle" :class="{'tryShow':tryShow}">
-            <i class="fa fa-hand-pointer-o"></i><br>
-            我想试试
-          </div>
-          <div @click="share" :class="{'shareShow':shareShow}">
-            <i class="fa fa-paper-plane-o"></i><br>
-            我要推荐
-          </div>
-        </div>
     </section>
 </template>
 <script>
@@ -185,117 +166,6 @@
               }
             })
           },
-          //收藏接口
-          insertCollect() {
-             insertCollect({
-               openid: sessionStorage.openId,
-               taskId: this.id
-             }).then(res => {
-                if(res.resultCode == '00000'){
-                  this.$vux.toast.text('收藏成功')
-                }else{
-                  this.$vux.alert.show({title: '提示',content: res.resultMsg});
-                }
-             }) 
-          },
-          //加油接口
-          giveLike() {
-            giveLike({
-              openid: sessionStorage.openId,
-              id: this.id,
-              sereralCount: this.TTask.sereralCount
-            }).then(res => {
-              if(res.resultCode == '00000'){
-                this.$vux.toast.text('加油成功')
-                this.TTask.sereralCount = parseInt(this.TTask.sereralCount) + 1;
-              }else{
-                this.$vux.alert.show({title: '提示',content: res.resultMsg});
-              }
-            })
-          },
-          //我想试试接口
-          receive() {
-            receive({
-              openid: sessionStorage.openId,
-              taskId: this.id
-            }).then(res => {
-              if(res.resultCode == '00000'){
-                this.$vux.toast.text('任务领取成功')
-              }else{
-                this.$vux.alert.show({title: '提示',content: res.resultMsg});
-              }
-            })
-          },
-          //我要推荐接口
-          recommend() {
-            recommend({
-              openid: sessionStorage.openId,
-              taskId: this.id
-            }).then(res => {
-              if(res.resultCode == '00000'){
-                let shareId = res.shareId;
-                // title,desc,link,imgUrl
-                let title = this.TTask.name;
-                let desc = '您的朋友推荐了一个任务给您，赶快来领取吧~~';
-                let url = location.origin+'/elm/index/html#/shareMind?shareId='+shareId;
-                url = encodeURIComponent(url);
-                let link = 'https://open.weixin.qq.com/connect/oauth2/authorize?appid=wx4047e004835d5614&redirect_uri='+url+'&response_type=code&scope=snsapi_userinfo&state=STATE#wechat_redirect';
-                console.log(title,desc,link)
-                wxshare.init(title,desc,link,'')
-                this.maskShow = true;
-                // this.$vux.toast.text('任务领取成功')
-              }else{
-                this.$vux.alert.show({title: '提示',content: res.resultMsg});
-              }
-            })
-          },
-           //我要收藏
-          collection() {
-            if(this.isLogin == 'Y'){
-              this.insertCollect();
-            }else{
-              sessionStorage.currentUrl = location.href;
-              this.$router.push('/login');
-            }
-          },
-          //给他加油
-          sereral() {
-            if(this.isLogin == 'Y'){
-              this.giveLike();
-            }else{
-              sessionStorage.currentUrl = location.href;
-              this.$router.push('/login');
-            }
-          },
-          //我想试试
-          tryHandle() {
-            if(sessionStorage.openId == this.TTask.openid){
-              this.$vux.alert.show({title: '提示',content: '无法领取您自己发布的任务'});
-              return;
-            }
-            if(this.isLogin == 'Y'){
-              // this.insertCollect();
-              this.receive();
-            }else{
-              sessionStorage.currentUrl = location.href;
-              this.$router.push('/login');
-            }
-          },
-          //我要推荐
-          share() {
-            // this.shareShow = true;
-            if(this.isLogin == 'Y'){
-              // this.insertCollect();
-              this.recommend();
-              // this.maskShow = true;
-            }else{
-              sessionStorage.currentUrl = location.href;
-              this.$router.push('/login');
-            }
-          },
-          hideMask() {
-            this.maskShow = false;
-          },
           //查看详细文档
           downloadFile(path) {
             path = 'https://www.baidu.com/img/baidu_jgylogo3.gif';
@@ -303,6 +173,10 @@
           },
           //评论
           comment() {
+            if(this.commentInfo == ''){
+              this.$vux.alert.show({title: '提示',content: '评论不能为空'});
+              return
+            }
             giveComment({
               openid: sessionStorage.openId,
               id: this.id,
@@ -329,8 +203,10 @@
 </script>
 <style scoped>
     .wrapper {
-        position: relative;
-        margin-bottom: 1.95rem;
+        width: 100%;
+        position: absolute;
+        z-index: 110;
+        /* margin-bottom: 1.95rem; */
         /* overflow: auto; */
         background: #fff;
     }

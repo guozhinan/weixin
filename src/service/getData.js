@@ -34,7 +34,7 @@ export const editTUser = (data) => fetch('/user/editTUser', data,'POST');
 /**
  * 一键发布
  */
-export const insertTask = (data,ele) => fetch('/task/insertTask', data,'POST',ele);
+export const insertTask = (data) => fetch('/task/insertTask', data,'POST');
 /**
  * 我的任务列表
  */
@@ -71,10 +71,30 @@ export const getCommentList = (data) => fetch('/task/getCommentList', data,'POST
  * 加油
  */
 export const giveLike = (data) => fetch('/task/giveLike', data,'POST');
-
-
-
-
+/**
+ * 获取微信签名
+ */
+ export const getSignature = (data) => fetch('/api/wx/getSignature', data,'POST');
+/**
+ * 我想试试（领取任务）
+ */
+export const receive = (data) => fetch('/task/receive', data,'POST');
+/**
+ * 我要推荐（分享）
+ */
+export const recommend = (data) => fetch('/task/recommend', data,'POST');
+/**
+ * 分享详情
+ */
+export const shareInfo = (data) => fetch('/task/shareInfo', data,'POST');
+/**
+ * 我的推荐
+ */
+export const getShareList = (data) => fetch('/task/getShareList', data,'POST');
+/**
+ * 我领取的任务
+ */
+export const getReceiveList = (data) => fetch('/task/getReceiveList', data,'POST');
 
 
 
